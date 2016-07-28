@@ -12,7 +12,7 @@ for IN_FILE in *.fastq; do
         test -d ${TRIAL_HOME}/hits_${i} | mkdir -p ${TRIAL_HOME}/hits_${i}
         for j in `seq 1 5`; do
             # An experiment
-            subset_fasta.py -n ${NUM_READS} -k ${i} ${IN_FILE} > ${IN_FILE//.fastq/}/i.j.${IN_FILE}
+            python /project/flatiron/ben/projects/NINJA-DOJO/ninja_dojo/scripts/subset_fasta.py -n ${NUM_READS} -k ${i} ${IN_FILE} > ${IN_FILE//.fastq/}/i.j.${IN_FILE}
         done
     done
 done
