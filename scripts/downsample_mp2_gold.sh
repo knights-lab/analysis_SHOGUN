@@ -8,7 +8,7 @@ for IN_FILE in *.fastq; do
         # Make the directory to store down-sampling results
         for j in `seq 1 5`; do
             # An experiment
-            subset_fasta -k ${i} -i {IN_FILE//.fastq/fna} -o ${IN_FILE//.fastq}.i.j.fna
+            subset_fasta -k ${i} -i ${IN_FILE//.fastq/fna} -o ${IN_FILE//.fastq}.i.j.fna
         done
     done
 done
