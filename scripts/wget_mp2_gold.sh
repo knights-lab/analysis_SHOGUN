@@ -1,0 +1,16 @@
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AABu06iJ2Xu7MPSSwfyqznDEa/Even_40M_1.fastq.bz2?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AABxvRxMaaXvHi83jX6gt6tha/Even_40M_1.gold?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AADQBAO5FZ3V34zvVANqcFH1a/Even_40M_2.fastq.bz2?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AAAZBXqGTwHPAyz32u5VtNm3a/Even_40M_2.gold?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AABmhaf95M_4KvcZDKfEQbvYa/Even_40M_3.fastq.bz2?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AAClEO-zIeIb35ltLwX-6leWa/Even_40M_3.gold?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AAC6rj8ct6qyOUKtHUUWZp18a/Even_40M_4.fastq.bz2?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AACKbnspZN3zostGVGU7jbtKa/Even_40M_4.gold?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AAB51yv3L9GbaK5OWuGnarV-a/Log_40M_1.fastq.bz2?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AAAEV8NR16N5rf7VcGuC55DVa/Log_40M_1.gold?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AABWoscOwkCbqmEIaZJHWOqWa/Log_40M_2.fastq.bz2?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AADC-GKeZ12A8Wg5EovTH5hta/Log_40M_2.gold?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AADAlI4PowDqkF7g4674kGnCa/Log_40M_3.fastq.bz2?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AAAqNk598QaTX9X_28XCHHlfa/Log_40M_3.gold?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AAALzockxWDXctV0Tw0PwisZa/Log_40M_4.fastq.bz2?dl=0
+wget https://www.dropbox.com/sh/ovx9pdxceiiu52l/AACnMIN1K5Noi92ImKhJeVtxa/Log_40M_4.gold?dl=0
