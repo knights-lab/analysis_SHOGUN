@@ -1,0 +1,3 @@
+rule download_metaphlan2_gold_data:
+	output:
+		"{path}/
