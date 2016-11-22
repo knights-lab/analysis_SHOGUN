@@ -6,9 +6,6 @@ min_version("3.8.2")
 ### scripts
 script_path = "scripts"
 
-### tools
-
-
 ### import snakemake modules
 include: "data/Snakefile"
 

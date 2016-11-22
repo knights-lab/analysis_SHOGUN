@@ -1,4 +1,10 @@
-rule download_metaphlan2_gold_data:
-	output:
-		"{path}/
+from snakemake.utils import makedirs
 
+data_path = "data"
+
+Metaphlan2GoldData = expand("{path}/{data}", data=["Metaphlan2GoldData"], path=data_path)
+makedirs([Metaphlan2GoldData])
+
+rule download_metaphlan2_gold_data:
+    output:
+        expand("{path}/{sample_name}.fastq", path=
