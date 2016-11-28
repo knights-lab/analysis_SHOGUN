@@ -1,0 +1,1 @@
+Sequencing runs are being downloaded via Globus.
