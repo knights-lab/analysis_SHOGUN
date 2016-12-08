@@ -1,0 +1,32 @@
+
+
+Building a new DB, current time: 12/08/2016 11:06:31
+New DB name:   /project/flatiron/gabe/shogun_blast/blastDB
+New DB title:  /project/flatiron2/data/refseq_abfhv/complete/refseq.abfvh.all.annotated.fna
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 1000000000B
+Adding sequences from FASTA; added 15389 sequences in 413.581 seconds.
+	Command being timed: "makeblastdb -in /project/flatiron2/data/refseq_abfhv/complete/refseq.abfvh.all.annotated.fna -dbtype nucl -out blastDB"
+	User time (seconds): 299.43
+	System time (seconds): 82.61
+	Percent of CPU this job got: 91%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 6:56.42
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 4685744
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1233341
+	Voluntary context switches: 30915
+	Involuntary context switches: 12912
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 6494576
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
