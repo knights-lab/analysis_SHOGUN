@@ -1,4 +1,5 @@
- ncbi_tid|541229|gi|332287927|ref|NC_014937.1| Bacillus thuringiensis CT43 plasmid pBMB0558## EMBALMER 0.99a
+## EMBALMER 0.99a
+ncbi_tid|541229|gi|332287927|ref|NC_014937.1| Bacillus thuringiensis CT43 plasmid pBMB0558## EMBALMER 0.99a
 
 ```
 -rw-r-----  1 algh0022 knightslab 2.3M Dec  8 12:48 embAln.b6
