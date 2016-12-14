@@ -10,4 +10,5 @@ UTREE took couple hours to build and seconds to search
 
 ##TODO
 BT2 search
+
 Compare num hts and avg accuracy
