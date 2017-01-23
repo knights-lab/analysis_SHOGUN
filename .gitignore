@@ -181,3 +181,5 @@ fabric.properties
 sftp-config.json
 
 # Custom entries
+.gitignore
+data/
