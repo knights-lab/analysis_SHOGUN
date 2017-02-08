@@ -7,7 +7,7 @@ import sys
 
 
 def make_arg_parser():
-    parser = argparse.ArgumentParser(description='Get least common ancestor for alignments in unsorted BAM/SAM file')
+    parser = argparse.ArgumentParser(description="Summarize a UTree mapping file by taxonomic annotations.")
     parser.add_argument('-i', '--input', help='The folder containing the SAM files to process.', required=True, type=str)
     parser.add_argument('-o', '--output', help='If nothing is given, then STDOUT, else write to file')
     parser.add_argument('-d', '--depth', help='Depth to summarize at.', default=7, type=int)
