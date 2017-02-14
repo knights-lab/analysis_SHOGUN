@@ -33,7 +33,7 @@ def main():
             with open(os.path.join(genomes_path, filename)) as inf:
                 inf_fasta = FASTA(inf)
                 for header, seq in inf_fasta.read():
-                    lengths_dict['_'.join(filename.split('_')[:2])] = (os.path.join(genomes_path, filename), len(seq))
+                    lengths_dict['_'.join(filename.split('_')[:2])] = (os.path.abspath(os.path.join(genomes_path, filename)), len(seq))
 
     with open(args.genomes_lengths, 'w') as outf:
         outf.write(json.dumps(lengths_dict))
