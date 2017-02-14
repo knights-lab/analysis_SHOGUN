@@ -4,7 +4,7 @@ Writes a JSON dict that has:
 
 DICT[assembly_accession] -> (relative_path, genome_length_bp)
 Example usage:
-python scripts/get_genome_lengths.py" -p results/170214-simulation/genomes -g results/genome_lengths.json
+python scripts/get_genome_lengths.py" -p results/170214-simulation/genomes -o results/170214-genome_lengths
 """
 
 import os
@@ -18,13 +18,16 @@ def make_arg_parser():
     # genomes_path = os.path.join('..', 'results', '170214-simulation', 'genomes')
     parser.add_argument('-p', '--genomes_path', type=str, required=True)
     # os.path.join('..', 'results', 'genome_lengths.json'), 'w'
-    parser.add_argument('-g', '--genomes_lengths', type=str, required=True)
+    parser.add_argument('-o', '--outfile_dir', type=str, required=True)
     return parser
 
 
 def main():
     parser = make_arg_parser()
     args = parser.parse_args()
+
+    if not os.path.exists(args.outfile_dir):
+        os.makedirs(args.outfile_dir)
 
     genomes_path = args.genomes_path
     lengths_dict = {}
@@ -35,7 +38,7 @@ def main():
                 for header, seq in inf_fasta.read():
                     lengths_dict['_'.join(filename.split('_')[:2])] = (os.path.abspath(os.path.join(genomes_path, filename)), len(seq))
 
-    with open(args.genomes_lengths, 'w') as outf:
+    with open(os.path.join(args.outfile_dir, 'genome_lengths.json'), 'w') as outf:
         outf.write(json.dumps(lengths_dict))
 
 if __name__ == '__main__':

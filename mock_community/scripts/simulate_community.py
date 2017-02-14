@@ -3,7 +3,7 @@
 Simulate a DWGSIM Illumina Hi-Seq run from the output of create_prevalence communities and get_genome_lengths
 
 Example run:
-scripts/simulate_community.py -g results\genome_lengths.json -a results\170214-genus\gut_0.csv -o results\170214-gut_example
+scripts/simulate_community.py -g results\170214-genome_lengths.json -a results\170214-genus\gut_0.csv -o results\170214-gut_example
 """
 
 import os
