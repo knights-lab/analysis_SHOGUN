@@ -102,7 +102,7 @@ def main():
             print('%s_%d.csv' % (type, i))
             print('Number of Unique Strains: %d' % (np.sum(mask)))
             df_merged[mask].to_csv(os.path.join(args.outfile_dir, '%s_%d.csv' % (type, i)))
-            print('Number of Unique Species: %d' % (np.unique(df_merged[mask]['species_taxid']).shape[0]))
+            print('Number of Unique Species: %d' % (np.unique(df_merged[mask]['species_taxid_x']).shape[0]))
             # print('Number of Unique Species: %d' % (np.unique(df_merged[mask]['species_taxid']).shape[0]))
             [ftp_links.add(i + '/%s_genomic.fna.gz' % (i.split('/')[-1])) for i in df_merged['ftp_path']]
 
