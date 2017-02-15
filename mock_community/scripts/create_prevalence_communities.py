@@ -73,6 +73,7 @@ def main():
     #      dtype='object')
     assembly_summary_df = pd.read_csv(args.assembly_summary, sep='\t')
     assembly_summary_df = assembly_summary_df[assembly_summary_df['refseq_category'] != 'na']
+    assembly_summary_df = assembly_summary_df[assembly_summary_df['assembly_level'].isin(['Complete Genome', 'Chromosome'])]
 
     genus_taxids = [None]*assembly_summary_df.shape[0]
     for i, taxid in enumerate(assembly_summary_df['taxid']):
