@@ -88,7 +88,7 @@ def main():
 
     # df_merged = pd.merge(assembly_summary_df, species_df, on=['species_taxid'], how='inner')
     prevalence_group = prevalence_df.groupby(['genus_taxid']).mean()
-    prevalence_group['genus_taxid'] = prevalence_group.index()
+    prevalence_group['genus_taxid'] = prevalence_group.index
     df_merged = pd.merge(assembly_summary_df, prevalence_group, on=['genus_taxid'], how='inner')
     df_merged.to_csv(os.path.join(args.outfile_dir, 'HMP_taxid_prevalence_merged.csv'))
 
