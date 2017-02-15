@@ -14,6 +14,7 @@ import os
 from ninja_utils.parsers import FASTA
 import json
 import argparse
+from collections import defaultdict
 
 
 def make_arg_parser():
@@ -33,13 +34,13 @@ def main():
         os.makedirs(args.outfile_dir)
 
     genomes_path = args.genomes_path
-    lengths_dict = {}
+    lengths_dict = defaultdict(int)
     for filename in os.listdir(genomes_path):
         if filename.endswith('.fna'):
             with open(os.path.join(genomes_path, filename)) as inf:
                 inf_fasta = FASTA(inf)
                 for header, seq in inf_fasta.read():
-                    lengths_dict['_'.join(filename.split('_')[:2])] = (os.path.abspath(os.path.join(genomes_path, filename)), len(seq))
+                    lengths_dict['_'.join(filename.split('_')[:2])] += (os.path.abspath(os.path.join(genomes_path, filename)), len(seq))
 
     with open(os.path.join(args.outfile_dir, 'genome_lengths.json'), 'w') as outf:
         outf.write(json.dumps(lengths_dict))
