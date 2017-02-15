@@ -78,7 +78,10 @@ def main():
 
     for file_path, count in zip(file_paths, counts):
         #dwgsim stuff here
-        run_command(create_dwgsim_illumina_hiseq(file_path, os.path.join(args.outfile_dir, os.path.basename(file_path)[:-4] + 'simulated.fastq'), count))
+        assembly_accession = os.path.basename(file_path)[:-4]
+        assembly_accession = '_'.join(assembly_accession.split('_')[:2])
+        taxid = df[df['assembly_accession'] == assembly_accession]['taxid']
+        run_command(create_dwgsim_illumina_hiseq(file_path, os.path.join(args.outfile_dir, assembly_accession + '.taxid.%d.simulated' % taxid), count))
 
 
 if __name__ == '__main__':

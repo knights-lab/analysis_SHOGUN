@@ -7,7 +7,7 @@ DICT[assembly_accession] -> (relative_path, genome_length_bp)
 Run this script second
 
 Example usage:
-python scripts/get_genome_lengths.py" -p results/170214-simulation/genomes -o results/170214-genome_lengths
+python scripts/get_genome_lengths.py -p results/170214-simulation/genomes -o results/170214-genome_lengths
 """
 
 import os
