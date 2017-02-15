@@ -27,6 +27,7 @@ def make_arg_parser():
     parser.add_argument('-a', '--assembly_summary', type=str, required=True)
     # os.path.join('..', 'data', 'ncbi_tid_HMP_taxon_prevalence.csv')
     parser.add_argument('-o', '--outfile_dir', type=str, required=True)
+    parser.add_argument('-f', '--ftp', type=bool, default=True)
     return parser
 
 
@@ -86,7 +87,9 @@ def main():
     species_df = prevalence_df[~prevalence_df['species_taxid'].isnull()]
 
     # df_merged = pd.merge(assembly_summary_df, species_df, on=['species_taxid'], how='inner')
-    df_merged = pd.merge(assembly_summary_df, prevalence_df, on=['genus_taxid'], how='inner')
+    prevalence_group = prevalence_df.groupby(['genus_taxid']).mean()
+    prevalence_group['genus_taxid'] = prevalence_group.index()
+    df_merged = pd.merge(assembly_summary_df, prevalence_group, on=['genus_taxid'], how='inner')
     df_merged.to_csv(os.path.join(args.outfile_dir, 'HMP_taxid_prevalence_merged.csv'))
 
     ftp_links = set()
@@ -99,7 +102,7 @@ def main():
             print('%s_%d.csv' % (type, i))
             print('Number of Unique Strains: %d' % (np.sum(mask)))
             df_merged[mask].to_csv(os.path.join(args.outfile_dir, '%s_%d.csv' % (type, i)))
-            print('Number of Unique Species: %d' % (np.unique(df_merged[mask]['species_taxid_x']).shape[0]))
+            print('Number of Unique Species: %d' % (np.unique(df_merged[mask]['species_taxid']).shape[0]))
             # print('Number of Unique Species: %d' % (np.unique(df_merged[mask]['species_taxid']).shape[0]))
             [ftp_links.add(i + '/%s_genomic.fna.gz' % (i.split('/')[-1])) for i in df_merged['ftp_path']]
 
@@ -107,14 +110,15 @@ def main():
         for i in ftp_links:
             outf.write('%s\n' % i)
 
-    # Download genomes and decompress
-    for ftp_link in ftp_links:
-        outfile_path = os.path.join(args.outfile_dir, 'genomes', ftp_link.split('/')[-1][:-3])
-        if not os.path.isfile(outfile_path):
-            with open(outfile_path, 'wb') as outf:
-                with urllib.request.urlopen(ftp_link) as stream:
-                    for rv in stream_gzip_decompress(stream):
-                        outf.write(rv)
+    if args.ftp:
+        # Download genomes and decompress
+        for ftp_link in ftp_links:
+            outfile_path = os.path.join(args.outfile_dir, 'genomes', ftp_link.split('/')[-1][:-3])
+            if not os.path.isfile(outfile_path):
+                with open(outfile_path, 'wb') as outf:
+                    with urllib.request.urlopen(ftp_link) as stream:
+                        for rv in stream_gzip_decompress(stream):
+                            outf.write(rv)
 
 if __name__ == '__main__':
     main()
