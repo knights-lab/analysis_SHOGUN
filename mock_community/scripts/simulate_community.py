@@ -28,7 +28,7 @@ def make_arg_parser():
 
 def create_dwgsim_illumina_hiseq(file_path, fq_outfile, count, seed=99):
     return ['dwgsim', '-E', '0.001', '-e', '0.001', '-r', '0.001', '-q', 'f', '-c', '0', '-1', '100',
-            '-2', '100', '-d', '50', '-s', '5', '-N', str(count), '-y', '0.0', '-z', str(seed), file_path, fq_outfile]
+            '-2', '100', '-d', '150', '-s', '20', '-N', str(count), '-y', '0.0', '-z', str(seed), file_path, fq_outfile]
 
 
 def main():
