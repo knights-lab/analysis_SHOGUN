@@ -11,6 +11,9 @@ python scripts/create_prevalence_communities.py -p data\HMP_taxon_prevalence.csv
 import pandas as pd
 import os
 from dojo.taxonomy import NCBITree
+import urllib.request
+from ninja_utils.utils import stream_gzip_decompress
+
 import numpy as np
 import argparse
 
@@ -34,6 +37,9 @@ def main():
     # Check and make the outfile dir
     if not os.path.exists(args.outfile_dir):
         os.makedirs(args.outfile_dir)
+
+    if not os.path.exists(os.path.join(args.outfile_dir, 'genomes')):
+        os.makedirs(os.path.join(args.outfile_dir, 'genomes'))
 
     # Grab the prevalence df
     prevalence_df = pd.read_csv(args.prevalence_csv)
@@ -95,11 +101,20 @@ def main():
             df_merged[mask].to_csv(os.path.join(args.outfile_dir, '%s_%d.csv' % (type, i)))
             print('Number of Unique Species: %d' % (np.unique(df_merged[mask]['species_taxid_x']).shape[0]))
             # print('Number of Unique Species: %d' % (np.unique(df_merged[mask]['species_taxid']).shape[0]))
-            [ftp_links.add( 'wget ' + i + '/%s_genomic.fna.gz' % (i.split('/')[-1])) for i in df_merged['ftp_path']]
+            [ftp_links.add(i + '/%s_genomic.fna.gz' % (i.split('/')[-1])) for i in df_merged['ftp_path']]
 
     with open(os.path.join(args.outfile_dir, 'ftp_links.txt'), 'w') as outf:
         for i in ftp_links:
             outf.write('%s\n' % i)
+
+    # Download genomes and decompress
+    for ftp_link in ftp_links:
+        outfile_path = os.path.join(args.outfile_dir, 'genomes', ftp_link.split('/')[-1][:-3])
+        if not os.path.isfile(outfile_path):
+            with open(outfile_path, 'wb') as outf:
+                with urllib.request.urlopen(ftp_link) as stream:
+                    for rv in stream_gzip_decompress(stream):
+                        outf.write(rv)
 
 if __name__ == '__main__':
     main()

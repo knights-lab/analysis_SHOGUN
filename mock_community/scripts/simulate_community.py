@@ -2,8 +2,10 @@
 """
 Simulate a DWGSIM Illumina Hi-Seq run from the output of create_prevalence communities and get_genome_lengths
 
+Run this script last
+
 Example run:
-scripts/simulate_community.py -g results\170214-genome_lengths.json -a results\170214-genus\gut_0.csv -o results\170214-gut_example
+scripts/simulate_community.py -g results\170214-genome_lengths\genome_lengths.json -a results\170214-genus\gut_0.csv -o results\170214-gut_example
 """
 
 import os
@@ -76,7 +78,7 @@ def main():
 
     for file_path, count in zip(file_paths, counts):
         #dwgsim stuff here
-        run_command(create_dwgsim_illumina_hiseq(file_path, 'd', count))
+        run_command(create_dwgsim_illumina_hiseq(file_path, os.path.join(args.outfile_dir, os.path.basename(file_path)[:-4] + 'simulated.fastq'), count))
 
 
 if __name__ == '__main__':
