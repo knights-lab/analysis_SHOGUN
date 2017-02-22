@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 python scripts/create_prevalence_communities.py -p data/HMP_taxon_prevalence.csv -a data/assembly_summary.txt -o results/170214-genus
 
-python scripts/get_genome_lengths.py -p results/170214-genus/genomes -o results/170214-genome_lengths
+# Deprecated
+#python scripts/get_genome_lengths.py -p results/170214-genus/genomes -o results/170214-genome_lengths
 
 # simulate communites
 python scripts/simulate_community.py -g results/170214-genome_lengths/genome_lengths.json -a results/170214-genus/Gut_0.csv -o results/170214-gut_0

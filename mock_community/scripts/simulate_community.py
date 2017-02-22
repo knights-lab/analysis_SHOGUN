@@ -19,7 +19,6 @@ import argparse
 
 def make_arg_parser():
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('-g', '--genome_lengths', type=str, required=True)
     parser.add_argument('-a', '--assembly_summary_file', type=str, required=True)
     parser.add_argument('-o', '--outfile_dir', type=str, required=True)
     parser.add_argument('-n', '--num_sequences', type=int, default=10000000)
@@ -38,9 +37,10 @@ def main():
     if not os.path.exists(args.outfile_dir):
         os.makedirs(args.outfile_dir)
 
-    # DICT[assembly_accession] -> (relative_path, genome_length_bp)
-    with open(args.genome_lengths) as json_inf:
-        genomes_dict = json.load(json_inf)
+    # Deprecated
+    # # DICT[assembly_accession] -> (relative_path, genome_length_bp)
+    # with open(args.genome_lengths) as json_inf:
+    #     genomes_dict = json.load(json_inf)
 
     inf_practice = args.assembly_summary_file
 
@@ -56,14 +56,14 @@ def main():
     green_genes_taxonomies = []
 
     for i, row in inf_df.iterrows():
-        if row['assembly_accession'] in genomes_dict:
-            file_path, genome_length = genomes_dict[row['assembly_accession']]
-            file_paths.append(file_path)
-            counts.append(genome_length)
-            assembly_accessions.append(row['assembly_accession'])
-            taxids.append(row['taxid'])
-            species_taxids.append(row['species_taxid_x'])
-            green_genes_taxonomies.append(tree.green_genes_lineage(row['taxid'], depth=8, depth_force=True))
+        file_path = row['file_path']
+        file_paths.append(file_path)
+        genome_length = int(row['avg_ungapped_length'])
+        counts.append(genome_length)
+        assembly_accessions.append(row['assembly_accession'])
+        taxids.append(row['taxid'])
+        species_taxids.append(row['species_taxid_x'])
+        green_genes_taxonomies.append(tree.green_genes_lineage(row['taxid'], depth=8, depth_force=True))
 
     # validate the count arrays
     counts = np.array(counts)

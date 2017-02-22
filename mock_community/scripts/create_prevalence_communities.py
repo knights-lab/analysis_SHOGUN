@@ -21,6 +21,7 @@ import argparse
 def make_arg_parser():
     parser = argparse.ArgumentParser(description='')
     # os.path.join('..', 'data', 'HMP_taxon_prevalence.csv')
+    parser.add_argument('-g', '--species_genome_size', type=str, required=True)
     parser.add_argument('-p', '--prevalence_csv', type=str, required=True)
     # refseqv80 summary file
     # os.path.join('..', 'data', 'assembly_summary.txt')
@@ -91,6 +92,11 @@ def main():
     prevalence_group = prevalence_df.groupby(['genus_taxid']).mean()
     prevalence_group['genus_taxid'] = prevalence_group.index
     df_merged = pd.merge(assembly_summary_df, prevalence_group, on=['genus_taxid'], how='inner')
+    # merge genome size
+    df_species_genome_size = pd.read_csv(args.species_genome_size, sep='\t')
+    df_merged = pd.merge(df_merged, df_species_genome_size, on=['species_taxid_x'])
+    # Set file path
+    df_merged['file_path'] = [os.path.abspath(os.path.join(args.outfile_dir, 'genomes', '%s_genomic.fna' % (i.split('/')[-1]))) for i in df_merged['ftp_path']]
     df_merged.to_csv(os.path.join(args.outfile_dir, 'HMP_taxid_prevalence_merged.csv'))
 
     ftp_links = set()
