@@ -30,7 +30,7 @@ def main():
     refseq_db = RefSeqDatabase()
 
     with open(args.input) as inf:
-        csv_inf = csv.reader(inf, sep='\t')
+        csv_inf = csv.reader(inf, delimiter='\t')
         for line in csv_inf:
             refseq_accession_version = line[0]
             taxid = refseq_db.get_ncbi_tid_from_refseq_accession(refseq_accession_version)[0]
