@@ -36,8 +36,9 @@ def main():
             taxid = refseq_db.get_ncbi_tid_from_refseq_accession(refseq_accession_version)[0]
             species_taxid = ncbi_tree.get_rank_with_taxon_id(taxid, 'species')[0]
             green_genes_lineage = ncbi_tree.green_genes_lineage(taxid, depth=8)
-            outf_line = [line[0], str(species_taxid), str(taxid), green_genes_lineage] + line[1:]
-            print('\t'.join(outf_line))
+            if taxid and species_taxid and green_genes_lineage:
+                outf_line = [line[0], str(species_taxid), str(taxid), green_genes_lineage] + line[1:]
+                print('\t'.join(outf_line))
 
 if __name__ == '__main__':
     main()
