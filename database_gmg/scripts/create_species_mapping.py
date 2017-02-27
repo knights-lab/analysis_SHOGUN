@@ -14,7 +14,7 @@ from dojo.taxonomy import NCBITree
 def make_arg_parser():
     parser = argparse.ArgumentParser(description='')
     # genomes_path = os.path.join('..', 'results', '170214-simulation', 'genomes')
-    parser.add_argument('-h', '--headers', type=str, required=True)
+    parser.add_argument('-r', '--headers', type=str, required=True)
     parser.add_argument('-c', '--refseq_catalog', type=str, required=True)
     # os.path.join('..', 'results', 'genome_lengths.json'), 'w'
     # parser.add_argument('-o', '--output', type=str, required=True)
