@@ -38,7 +38,7 @@ def main():
     with open(args.headers) as inf:
         for line in inf:
             line = line.strip()
-            taxid = refseq_accession_to_taxid[refseq_accession_to_taxid]
+            taxid = refseq_accession_to_taxid[line]
             if taxid:
                 species_taxid = ncbi_tree.get_rank_with_taxon_id(int(taxid), 'species')
             else:
