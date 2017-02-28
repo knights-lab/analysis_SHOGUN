@@ -40,7 +40,8 @@ def main():
         for header, seq in fasta.read():
             refseq_id = header.split(' ')[0]
             if refseq_id in header_to_taxid:
-                print(">taxid|%s|%s" % (refseq_id, header))
+                taxid = header_to_taxid[refseq_id]
+                print(">taxid|%s|%s" % (taxid, header))
                 print(seq)
 
 if __name__ == '__main__':
