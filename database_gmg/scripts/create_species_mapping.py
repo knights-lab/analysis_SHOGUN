@@ -51,7 +51,8 @@ def main():
             else:
                 species_taxid = ''
                 no_mapping += 1
-            print('%s\t%s\t%s' % (line, refseq_accession_to_taxid[line], species_taxid))
+            green_genes_lineage = ncbi_tree.green_genes_lineage(taxid, depth=8)
+            print('%s\t%s\t%s\t%s' % (line, refseq_accession_to_taxid[line], species_taxid, green_genes_lineage))
     print(no_mapping, file=sys.stderr)
     print(len(taxids), file=sys.stderr)
     print(len(species_taxids), file=sys.stderr)
