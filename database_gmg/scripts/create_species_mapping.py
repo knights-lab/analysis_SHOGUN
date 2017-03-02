@@ -32,7 +32,7 @@ def main():
     with open(args.refseq_catalog) as inf:
         for line in inf:
             line = line.strip().split('\t')
-            refseq_accession_to_taxid[line[1]] = line[0]
+            refseq_accession_to_taxid[line[2]] = line[0]
 
     no_mapping = 0
     taxids = set()
