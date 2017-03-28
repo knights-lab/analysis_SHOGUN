@@ -6,11 +6,9 @@ Example usage:
 """
 
 import argparse
-import csv
 from collections import defaultdict
 from dojo.taxonomy import NCBITree
 import sys
-
 
 def make_arg_parser():
     parser = argparse.ArgumentParser(description='')
@@ -48,11 +46,10 @@ def main():
             if taxid:
                 species_taxid = str(ncbi_tree.get_rank_with_taxon_id(int(taxid), 'species')[0])
                 species_taxids.add(species_taxid)
+                green_genes_lineage = ncbi_tree.green_genes_lineage(int(taxid), depth=8, depth_force=True)
+                print('%s\t%s\t%s\t%s' % (line, refseq_accession_to_taxid[line], species_taxid, green_genes_lineage))
             else:
-                species_taxid = ''
                 no_mapping += 1
-            green_genes_lineage = ncbi_tree.green_genes_lineage(taxid, depth=8)
-            print('%s\t%s\t%s\t%s' % (line, refseq_accession_to_taxid[line], species_taxid, green_genes_lineage))
     print(no_mapping, file=sys.stderr)
     print(len(taxids), file=sys.stderr)
     print(len(species_taxids), file=sys.stderr)
