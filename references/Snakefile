@@ -1,6 +1,6 @@
 import os
 # The configuration file
-REF_BASENAMES = expand("{path}/test/{basename}", path = data_path, basename = ["miniGWG.100"])
+REF_BASENAMES = expand("{basename}", basename = ["miniGWG.100"])
 REFS = [utree_ref_path]
 
 def get_fasta_path(wildcards):
