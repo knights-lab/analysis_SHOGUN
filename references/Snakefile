@@ -20,10 +20,10 @@ def get_fasta_path(wildcards):
 ########################################################################
 rule utree_specific_build:
     input:
-        fasta = "{basename}.fna",
-        tax = "{basename}.tax"
-    params:
-        input_path = get_fasta_path
+        fasta = lambda wildcards: os.path.join(config["indexes"][wildcards.basename], "{basename}.fna".format(basename=wildcards.basename)),
+        tax = lambda wildcards: os.path.join(config["indexes"][wildcards.basename], "{basename}.tax".format(basename=wildcards.basename))
+    # params:
+    #     input_path = get_fasta_path
     output:
         ctr = "{output_path}/{basename}.ctr",
         utree_log = "{output_path}/{basename}.log",
@@ -33,8 +33,8 @@ rule utree_specific_build:
 #    threads: 120
     shell:
         """
-        /usr/bin/time -v sh -c 'utree-build {params.input_path}/{input.fasta} {params.input_path}/{input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads};
-        utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.time_memory_log} 2>&1
+        /usr/bin/time -v sh -c 'utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads};
+        utree-compress {wildcards}/{wildcards.basename}.ubt {output.ctr}' >> {output.time_memory_log} 2>&1
         mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}
         rm {wildcards.output_path}/{wildcards.basename}.ubt
         """

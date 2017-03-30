@@ -6,6 +6,7 @@ min_version("3.11.2")
 
 ## Include the config
 include: "config.py"
+configfile: "config.yaml"
 
 results = expand("{path}/{name}_table.txt", path = result_path, name = "indices_time_and_memory")
 
