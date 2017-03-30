@@ -40,12 +40,12 @@ rule utree_specific_build:
         """
 
 ########################################################################
-# TIME RAM LOG
+# TIME MEMORY LOG
 ########################################################################
 rule generate_indices_time_and_memory_table:
   input:
     # UTREE
-    expand("{ref}/{basename}.time_mem.log", ref = REFS, basename = REF_BASENAMES)
+    expand("{ref}/{basename}.{k}.time_mem.log", ref = REFS, basename = REF_BASENAMES, k = range(3))
   output:
     expand("{output_path}/{name}_table.txt", output_path = result_path, name = "indices_time_and_memory")
   shell:
