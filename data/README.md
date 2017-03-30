@@ -14,7 +14,8 @@ gmg/
     miniGMG/
     megaGMG/
     test/
-        
+        miniGWG.100.fna: 100 test reference genomes
+        miniGWG.100.tax: Test taxonomy mapping file
 ```
 
 ##### a2t.rs81.txt
