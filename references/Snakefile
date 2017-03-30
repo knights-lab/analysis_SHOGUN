@@ -7,7 +7,7 @@ def get_fasta_path(wildcards):
     basename = wildcards.basename
 
     if basename.startswith("miniGWG.100"):
-        path = config["indexes"]["miniGWG.100"] + "/miniGWG.100"
+        path = config["indexes"]["miniGWG.100"] + "/miniGWG.100.fna"
     else:
         assert False
 
@@ -20,9 +20,10 @@ rule utree_specific_build:
     input:
         # fasta = lambda wildcards: os.path.join(config["indexes"][wildcards.basename], "{basename}.fna".format(basename=wildcards.basename)),
         # tax = lambda wildcards: os.path.join(config["indexes"][wildcards.basename], "{basename}.tax".format(basename=wildcards.basename))
-        get_fasta_path
+        get_fasta_path,
+        lambda wildcards: get_fasta_path(wildcards)[:-3] + '.tax'
     # params:
-    #     input_path = get_fasta_path
+    #     taxa_path =
     output:
         ctr = "{output_path}/{basename}.ctr",
         utree_log = "{output_path}/{basename}.log",
@@ -32,7 +33,7 @@ rule utree_specific_build:
 #    threads: 120
     shell:
         """
-        /usr/bin/time -v sh -c 'utree-build {input}.fasta {input}.tax {wildcards.output_path}/{wildcards.basename}.ubt {threads};
+        /usr/bin/time -v sh -c 'utree-build {input[0]} {input[1]} {wildcards.output_path}/{wildcards.basename}.ubt {threads};
         utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.time_memory_log} 2>&1
         mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}
         rm {wildcards.output_path}/{wildcards.basename}.ubt
