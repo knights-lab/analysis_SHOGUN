@@ -1,8 +1,6 @@
-START = "/project/flatiron2/data/gmg/test/miniGWG.100"
-
 # The configuration file
 REF_BASENAMES = expand("{path}/test/{basename}", path = data_path, basename = ["miniGWG.100"])
-REFS = [UTree_ref_path]
+REFS = [utree_ref_path]
 
 ########################################################################
 # INDICES
@@ -21,7 +19,7 @@ rule utree_specific_build:
 #    threads: 120
     shell:
         """
-        /usr/bin/time -v sh -c '{UTree}/utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads};
+        /usr/bin/time -v sh -c 'utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads};
         utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.time_memory_log} 2>&1
         mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}
         rm {wildcards.output_path}/{wildcards.basename}.ubt
