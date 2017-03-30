@@ -7,7 +7,7 @@ def get_fasta_path(wildcards):
     basename = wildcards.basename
 
     if basename.startswith("miniGWG.100"):
-        path = config["indexes"]["miniGWG.100"]
+        path = config["indexes"]["miniGWG.100"] + "/miniGWG.100"
     else:
         assert False
 
