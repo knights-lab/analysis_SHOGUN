@@ -8,8 +8,7 @@ REFS = [utree_ref_path]
 rule utree_specific_build:
     input:
         fasta = "{input_path}/{basename}.fna",
-        tax = "{input_path}/{basename}.tax",
-        utree = UTree
+        tax = "{input_path}/{basename}.tax"
     output:
         ctr = "{output_path}/{basename}.ctr",
         utree_log = "{output_path}/{basename}.log",
