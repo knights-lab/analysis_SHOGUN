@@ -34,7 +34,7 @@ rule utree_specific_build:
     shell:
         """
         /usr/bin/time -v sh -c 'utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads};
-        utree-compress {wildcards}/{wildcards.basename}.ubt {output.ctr}' >> {output.time_memory_log} 2>&1
+        utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.time_memory_log} 2>&1
         mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}
         rm {wildcards.output_path}/{wildcards.basename}.ubt
         """
