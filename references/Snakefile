@@ -4,24 +4,27 @@ REF_BASENAMES = expand("{basename}", basename = ["miniGWG.100"])
 REFS = [utree_ref_path]
 
 def get_fasta_path(wildcards):
-    fasta_path = ""
+    fasta_path, tax_path = "", ""
 
     basename = wildcards.basename
 
     if basename.startswith("miniGWG.100"):
-        fasta_path = os.path.join(result_path, "gmg", "test")
+        path = config["indexes"]["miniGWG.100"]
+        fasta_path = path + ".fna"
+        taxa_path = path + ".tax"
     else:
         assert False
 
-    return fasta_path
+    return fasta_path, tax_path
 
 ########################################################################
 # INDICES
 ########################################################################
 rule utree_specific_build:
     input:
-        fasta = lambda wildcards: os.path.join(config["indexes"][wildcards.basename], "{basename}.fna".format(basename=wildcards.basename)),
-        tax = lambda wildcards: os.path.join(config["indexes"][wildcards.basename], "{basename}.tax".format(basename=wildcards.basename))
+        # fasta = lambda wildcards: os.path.join(config["indexes"][wildcards.basename], "{basename}.fna".format(basename=wildcards.basename)),
+        # tax = lambda wildcards: os.path.join(config["indexes"][wildcards.basename], "{basename}.tax".format(basename=wildcards.basename))
+        fasta, tax = get_fasta_path
     # params:
     #     input_path = get_fasta_path
     output:
