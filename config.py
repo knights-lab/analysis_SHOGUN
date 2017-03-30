@@ -2,7 +2,7 @@ import os
 
 ## Define variables
 
-BASE = "/project/flatiron2/ben/projects/analysis_SHOGUN/data"
+BASE = "/project/flatiron2/ben/projects/analysis_SHOGUN"
 N_THREADS = 96
 
 ### scripts
