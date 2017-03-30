@@ -9,7 +9,7 @@ include: "config.py"
 
 results = expand("{path}/{name}_table.txt", path = result_path, name = "indices_time_and_memory")
 
-include: "references\Snakefile"
+include: "references/Snakefile"
 
 rule all:
   input: results
