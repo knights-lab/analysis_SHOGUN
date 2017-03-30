@@ -1,7 +1,7 @@
 START = "/project/flatiron2/data/gmg/test/miniGWG.100"
 
 # The configuration file
-REF_BASENAMES = expand("{path}/test/miniGWG", path = data_path, basenames = [miniGWG.100])
+REF_BASENAMES = expand("{path}/test/{basename}", path = data_path, basename = [miniGWG.100])
 REFS = [UTree_ref_path]
 
 ########################################################################
