@@ -1,0 +1,44 @@
+START = "/project/flatiron2/data/gmg/test/miniGWG.100"
+
+# The configuration file
+REF_BASENAMES = expand("{path}/test/miniGWG", path = data_path, basenames = [miniGWG.100])
+REFS = [UTree_ref_path]
+
+########################################################################
+# INDICES
+########################################################################
+rule utree_specific_build:
+    input:
+        fasta = "{input_path}/{basename}.fna",
+        tax = "{input_path}/{basename}.tax",
+        utree = UTree
+    output:
+        ctr = "{output_path}/{basename}.ctr",
+        utree_log = "{output_path}/{basename}.log",
+        time_memory_log = "{output_path}/{basename}.time_mem.log"
+#    benchmark:
+#        "{output_path}/{sample}.txt"
+#    threads: 120
+    shell:
+        """
+        /usr/bin/time -v sh -c '{UTree}/utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads};
+        utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.time_memory_log} 2>&1
+        mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}
+        rm {wildcards.output_path}/{wildcards.basename}.ubt
+        """
+
+########################################################################
+# TIME RAM LOG
+########################################################################
+rule generate_indices_time_and_memory_table:
+  input:
+    # UTREE
+    expand("{ref}/{basename}.time_mem.log", ref = REFS, basename = REF_BASENAMES)
+  output:
+    expand("{output_path}/{name}_table.txt", output_path = result_path, name = "indices_time_and_memory")
+  shell:
+    "{script_path}/generate_indices_time_and_memory_table.py {input}.time_mem.log >> {output}"
+
+rule clean:
+    shell:
+        "rm -rf {OUTPUT_PATH}"
