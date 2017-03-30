@@ -21,7 +21,7 @@ rule utree_specific_build:
         # fasta = lambda wildcards: os.path.join(config["indexes"][wildcards.basename], "{basename}.fna".format(basename=wildcards.basename)),
         # tax = lambda wildcards: os.path.join(config["indexes"][wildcards.basename], "{basename}.tax".format(basename=wildcards.basename))
         get_fasta_path,
-        lambda wildcards: get_fasta_path(wildcards)[:-3] + '.tax'
+        lambda wildcards: get_fasta_path(wildcards)[:-4] + '.tax'
     # params:
     #     taxa_path =
     output:
