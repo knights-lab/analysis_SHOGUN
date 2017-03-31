@@ -1,2 +1,5 @@
-indexes:
-  miniGWG.100: "data/gmg/test"
+reference:
+  test: "data/references/gmg/test"
+  miniGWG: "data/references/gmg/miniGWG"
+  megaGMG: "data/references/gmg/megaGMG"
+  megaGWG: "data/references/gmg/megaGWG"
