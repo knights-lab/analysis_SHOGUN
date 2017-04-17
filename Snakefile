@@ -15,7 +15,7 @@ configfile: "config.yaml"
 
 contexts = ["test"]
 
-if config["benchmarks"] == "True":
+if config["settings"]["benchmarks"]:
     results = expand("results/{context}/indices_time_and_memory_table.txt", context=contexts)
 
 rule all:
