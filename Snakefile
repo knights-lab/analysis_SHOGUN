@@ -6,6 +6,7 @@ __author__ = "Benjamin Hillmann"
 __license__ = "MIT"
 
 from snakemake.utils import min_version
+
 min_version("3.11.2")
 
 import os
@@ -15,7 +16,11 @@ configfile: "config.yaml"
 
 contexts = ["test"]
 
+if config["settings"]["debug"]:
+    import ipdb
+
 if config["settings"]["benchmarks"]:
+    ipdb.set_trace()
     results = expand("results/{context}/indices_time_and_memory_table.txt", context=contexts)
 
 rule all:
@@ -25,8 +30,8 @@ rule all:
 ### Indexing of Databases
 rule index_utree_specific:
     input:
-        fasta = config["references"][wildcards.basename] + ".fna",
-        tax = config["references"][wildcards.basename] + ".tax"
+        fasta = config["reference"][wildcards.basename] + ".fna",
+        tax = config["reference"][wildcards.basename] + ".tax"
     output:
         ctr = "{output_path}/{basename}.ctr",
         utree_log = "{output_path}/{basename}.log"
