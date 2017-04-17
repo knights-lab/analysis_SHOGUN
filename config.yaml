@@ -3,3 +3,4 @@ reference:
   miniGWG: "data/references/gmg/miniGWG"
   megaGMG: "data/references/gmg/megaGMG"
   megaGWG: "data/references/gmg/megaGWG"
+benchmarks: True

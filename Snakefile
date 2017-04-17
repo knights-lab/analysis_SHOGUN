@@ -1,5 +1,5 @@
 """
-Analysis of the SHOGUN.
+Analysis for the SHOGUN paper
 """
 
 __author__ = "Benjamin Hillmann"
@@ -22,7 +22,7 @@ rule all:
     input:
         results
 
-#### Indexing of Databases ####
+### Indexing of Databases
 rule index_utree_specific:
     input:
         fasta = config["references"][wildcards.basename] + ".fna",
@@ -38,7 +38,7 @@ rule index_utree_specific:
             rm {wildcards.output_path}/{wildcards.basename}.ubt
         """
 
-#### Benchmarks ####
+### Benchmarks
 rule benchmark_build_indices:
     input:
         build_index_utree_specific.input
@@ -49,7 +49,7 @@ rule benchmark_build_indices:
 
 rule benchmark_alignment:
 
-#### Tables ####
+### Tables
 rule generate_indices_time_and_memory_table:
     input:
         # UTREE
@@ -57,6 +57,6 @@ rule generate_indices_time_and_memory_table:
     output:
         expand("results/{context}/{name}_table.txt", output_path=result_path, name="indices_time_and_memory")
     shell:
-        "{script_path}/generate_indices_time_and_memory_table.py {input}.time_mem.log >> {output}"
+        "{script_path}/generate_indices_time_and_memory_table.sh {input}.time_mem.log >> {output}"
 
 #### Plots ####
