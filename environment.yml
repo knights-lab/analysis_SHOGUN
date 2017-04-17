@@ -6,6 +6,7 @@ channels:
   - bioconda
 dependencies:
   - python>=3
+  - ipython
   - numpy
   - cytoolz
   - pip
