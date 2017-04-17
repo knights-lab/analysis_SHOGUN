@@ -6,3 +6,4 @@ reference:
 
 settings:
   benchmarks: true
+  debug: true
