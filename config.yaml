@@ -9,3 +9,4 @@ settings:
   debug: true
 
 benchmark_replicates: 3
+contexts: ['test']

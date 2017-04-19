@@ -181,3 +181,6 @@ fabric.properties
 sftp-config.json
 
 # Custom entries
+data
+results
+.snakemake
