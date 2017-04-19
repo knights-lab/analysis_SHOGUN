@@ -43,7 +43,7 @@ rule benchmark_index_utree:
 
 rule combine_benchmarks:
     input:
-        expand("results/index/benchmark_index.{basename}.{k}.log", k=range(config["benchmark_replicates"]))
+        expand("results/index/benchmark_index.{{basename}}.{k}.log", k=range(config["benchmark_replicates"]))
     output:
         "{output_path}/combined_benchmark_index.{basename}.log"
     shell:
