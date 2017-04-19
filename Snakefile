@@ -43,7 +43,7 @@ rule benchmark_index_utree:
 
 rule combine_benchmarks:
     input:
-        lambda wildcards: expand("results/index/benchmark_index.{{basename}}.{k}.log", k=range(config["benchmark_replicates"]), basename=wildcard.basename)
+        lambda wildcards: expand("results/index/benchmark_index.{{basename}}.{k}.log", k=range(config["benchmark_replicates"]), basename=wildcards.basename)
     output:
         "{output_path}/combined_benchmark_index.{basename}.log"
     shell:
