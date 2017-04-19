@@ -26,6 +26,12 @@ rule all:
     input:
         results
 
+def get_references(wildcards):
+    ipbd.set_trace()
+    fasta = expand(config["reference"]["test"] + "/{basename}.fna", basename=wildcards.basename)
+    tax = expand(config["reference"]["test"] + "/{basename}.tax", basename=wildcards.basename)
+    return dict(zip(("fasta", "tax"), (fasta, tax)))
+
 ### Indexing of Databases
 rule benchmark_index_utree:
     input:
@@ -49,11 +55,6 @@ rule combine_benchmarks:
     shell:
         "cat {input} > {output}"
 
-def get_references(wildcards):
-    ipbd.set_trace()
-    fasta = expand(config["reference"]["test"] + "/{basename}.fna", basename=wildcards.basename)
-    tax = expand(config["reference"]["test"] + "/{basename}.tax", basename=wildcards.basename)
-    return dict(zip(("fasta", "tax"), (fasta, tax)))
 
 ### Benchmarks
 
