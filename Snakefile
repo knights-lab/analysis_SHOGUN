@@ -38,7 +38,7 @@ rule benchmark_index_utree:
     script:
         """
             /usr/bin/time -v sh -c 'utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads};
-            utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.benchmark[value]}
+            utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.benchmark}
             mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}
             rm {wildcards.output_path}/{wildcards.basename}.ubt
         """
