@@ -20,7 +20,8 @@ if config["settings"]["debug"]:
     import ipdb
 
 if config["settings"]["benchmarks"]:    
-    results = expand("results/{context}/miniGWG.100.ctr", context=contexts)
+    results = expand("results/{context}/benchmark_index.miniGWG.100.{k}.log", context=contexts, k=config["benchmark_replicates"])
+    print(results)
 
 rule all:
     input:
