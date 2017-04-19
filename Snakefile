@@ -19,28 +19,32 @@ contexts = ["test"]
 if config["settings"]["debug"]:
     import ipdb
 
-if config["settings"]["benchmarks"]:
+if config["settings"]["benchmarks"]:    
     ipdb.set_trace()
-    results = expand("results/{context}/indices_time_and_memory_table.txt", context=contexts)
+    results = expand("results/{context}/", context=contexts)
 
 rule all:
     input:
         results
 
 ### Indexing of Databases
-rule index_utree_specific:
+rule benchmark_index_utree:
     input:
         fasta = config["reference"][wildcards.basename] + ".fna",
         tax = config["reference"][wildcards.basename] + ".tax"
     output:
         ctr = "{output_path}/{basename}.ctr",
         utree_log = "{output_path}/{basename}.log"
+        benchmark = expand("{output_path}/benchmark_index.{basename}.{k}.log", k=range(3))
     script:
         """
-            utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads};
-            utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}
-            mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}
-            rm {wildcards.output_path}/{wildcards.basename}.ubt
+            for value in {1..3}
+            do
+                /usr/bin/time -v sh -c 'utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads};
+                utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.benchmark[value]}
+                mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}
+                rm {wildcards.output_path}/{wildcards.basename}.ubt
+            done
         """
 
 ### Benchmarks
