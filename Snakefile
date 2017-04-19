@@ -20,7 +20,7 @@ if config["settings"]["debug"]:
     import ipdb
 
 if config["settings"]["benchmarks"]:    
-    results = expand("results/{context}/benchmark_index.miniGWG.100.{k}.log", context=contexts, k=range(config["benchmark_replicates"]))
+    results = 
 
 rule all:
     input:
@@ -31,17 +31,22 @@ rule benchmark_index_utree:
     input:
         fasta = config["reference"]["test"] + "/{basename}.fna",
         tax = config["reference"]["test"] + "/{basename}.tax"
-    params:
-
     output:
-        ctr = "{output_path}/{basename}.ctr",
-        utree_log = "{output_path}/{basename}.log",
+        ctr = "{output_path}/{basename}.{k}.ctr",
+        utree_log = "{output_path}/{basename}.{k}.log",
         benchmark = "{output_path}/benchmark_index.{basename}.{k}.log"
     run:
-        for i in range(config["benchmark_replicates"]):
-            shell("/usr/bin/time -v sh -c 'utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads}; utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.benchmark} 2>&1; ")
-            shell("mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}")
-            shell("rm {wildcards.output_path}/{wildcards.basename}.ubt")
+        shell("/usr/bin/time -v sh -c 'utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads}; utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.benchmark} 2>&1")
+        shell("mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}")
+        shell("rm {wildcards.output_path}/{wildcards.basename}.ubt")
+
+rule combine_benchmarks:
+    input:
+        expand("results/{context}/{basename}.{k}.log", context=contexts, k=range(config["benchmark_replicates"]))
+    output:
+        "{output_path}/combined_benchmark_index.{basename}.log"
+    shell:
+        "cat {input} > {output}"
 
 ### Benchmarks
 
