@@ -20,7 +20,7 @@ if config["settings"]["debug"]:
     import ipdb
 
 if config["settings"]["benchmarks"]:    
-    results = expand("results/miniGMG.ctr")
+    results = expand("results/miniGMG.100.ctr")
 
 rule all:
     input:
@@ -29,9 +29,8 @@ rule all:
 ### Indexing of Databases
 rule benchmark_index_utree:
     input:
-        ipdb.set_trace()
-        fasta = config["reference"]["test"] + ".fna",
-        tax = config["reference"]["test"] + ".tax"
+        fasta = config["reference"]["test"] + "/{basename}.fna",
+        tax = config["reference"]["test"] + "/{basename}.tax"
     output:
         ctr = "{output_path}/{basename}.ctr",
         utree_log = "{output_path}/{basename}.log",

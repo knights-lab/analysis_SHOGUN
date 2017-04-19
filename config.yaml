@@ -1,5 +1,5 @@
 reference:
-  test: "data/references/test/miniGWG.100"
+  test: "data/references/test"
   miniGWG: "data/references/gmg/miniGWG"
   megaGMG: "data/references/gmg/megaGMG"
   megaGWG: "data/references/gmg/megaGWG"
