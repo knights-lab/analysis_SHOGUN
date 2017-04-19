@@ -29,8 +29,8 @@ rule all:
 ### Indexing of Databases
 rule benchmark_index_utree:
     input:
-        fasta = config["reference"]["test"] + "/{basename}.fna",
-        tax = config["reference"]["test"] + "/{basename}.tax",
+        **get_references(wildcards)
+
     params:
         ctr = "{output_path}/{basename}.{k}.ctr",
     output:
@@ -48,6 +48,12 @@ rule combine_benchmarks:
         "{output_path}/combined_benchmark_index.{basename}.log"
     shell:
         "cat {input} > {output}"
+
+def get_references(wildcards):
+    ipbd.set_trace()
+    fasta = expand(config["reference"]["test"] + "/{basename}.fna", basename=wildcards.basename)
+    tax = expand(config["reference"]["test"] + "/{basename}.tax", basename=wildcards.basename)
+    return dict(zip(("fasta", "tax"), (fasta, tax)))
 
 ### Benchmarks
 
