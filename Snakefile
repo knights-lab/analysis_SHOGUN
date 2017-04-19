@@ -30,8 +30,8 @@ rule all:
 ### Indexing of Databases
 rule benchmark_index_utree:
     input:
-        fasta = config["reference"][wildcards.basename] + ".fna",
-        tax = config["reference"][wildcards.basename] + ".tax"
+        fasta = config["reference"]["{context}"] + ".fna",
+        tax = config["reference"]["{context}"] + ".tax"
     output:
         ctr = "{output_path}/{basename}.ctr",
         utree_log = "{output_path}/{basename}.log",
