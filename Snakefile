@@ -21,7 +21,7 @@ if config["settings"]["debug"]:
 
 if config["settings"]["benchmarks"]:    
     ipdb.set_trace()
-    results = expand("results/{context}/", context=contexts)
+    results = expand("results/miniGMG.ctr")
 
 rule all:
     input:
@@ -30,8 +30,8 @@ rule all:
 ### Indexing of Databases
 rule benchmark_index_utree:
     input:
-        fasta = config["reference"]["{context}"] + ".fna",
-        tax = config["reference"]["{context}"] + ".tax"
+        fasta = config["reference"][wildcards.context] + ".fna",
+        tax = config["reference"][wildcards.context] + ".tax"
     output:
         ctr = "{output_path}/{basename}.ctr",
         utree_log = "{output_path}/{basename}.log",
@@ -48,24 +48,7 @@ rule benchmark_index_utree:
         """
 
 ### Benchmarks
-rule benchmark_build_indices:
-    input:
-        build_index_utree_specific.input
-    output:
-        "results/{context}/indices_time_and_memory_table.txt"
-    script:
-        "script/benchmark_build_indices.py"
-
-rule benchmark_alignment:
 
 ### Tables
-rule generate_indices_time_and_memory_table:
-    input:
-        # UTREE
-        expand("{ref}/{basename}.{k}.time_mem.log", ref = REFS, basename = REF_BASENAMES, k = range(3))
-    output:
-        expand("results/{context}/{name}_table.txt", output_path=result_path, name="indices_time_and_memory")
-    shell:
-        "{script_path}/generate_indices_time_and_memory_table.sh {input}.time_mem.log >> {output}"
 
 #### Plots ####
