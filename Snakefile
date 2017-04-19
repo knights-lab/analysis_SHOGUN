@@ -34,7 +34,7 @@ rule benchmark_index_utree:
         tax = config["reference"][wildcards.basename] + ".tax"
     output:
         ctr = "{output_path}/{basename}.ctr",
-        utree_log = "{output_path}/{basename}.log"
+        utree_log = "{output_path}/{basename}.log",
         benchmark = expand("{output_path}/benchmark_index.{basename}.{k}.log", k=range(3))
     script:
         """
