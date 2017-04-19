@@ -34,11 +34,12 @@ rule benchmark_index_utree:
     output:
         ctr = "{output_path}/{basename}.ctr",
         utree_log = "{output_path}/{basename}.log",
-        benchmark = "{output_path}/benchmark_index.{basename}.log"
-    shell:
-        "/usr/bin/time -v sh -c 'utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads}; utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.benchmark} 2>&1; "
-        "mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}; "
-        "rm {wildcards.output_path}/{wildcards.basename}.ubt"
+        benchmark = expand("{output_path}/benchmark_index.{basename}.{benchmark_replicate}.log", benchmark_replicate=range(config["benchmark_replicates"]))
+    run:
+        for i in range(config["benchmark_replicates"]):
+            shell("/usr/bin/time -v sh -c 'utree-build {input.fasta} {input.tax} {wildcards.output_path}/{wildcards.basename}.ubt {threads}; utree-compress {wildcards.output_path}/{wildcards.basename}.ubt {output.ctr}' >> {output.benchmark} 2>&1; ")
+            shell("mv {wildcards.output_path}/{wildcards.basename}.ubt.log {output.utree_log}")
+            shell("rm {wildcards.output_path}/{wildcards.basename}.ubt")
 
 ### Benchmarks
 

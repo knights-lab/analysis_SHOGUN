@@ -7,3 +7,5 @@ reference:
 settings:
   benchmarks: true
   debug: true
+
+benchmark_replicates: 3
