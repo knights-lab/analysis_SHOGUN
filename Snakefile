@@ -20,7 +20,7 @@ if config["settings"]["debug"]:
     import ipdb
 
 if config["settings"]["benchmarks"]:    
-    results = expand("results/miniGMG.100.ctr")
+    results = expand("results/miniGWG.100.ctr")
 
 rule all:
     input:
