@@ -72,6 +72,8 @@ rule index_kraken:
     output:
         "results/indices/kraken_{basename}"
     threads: 12
+    benchmark:
+        "results/benchmarks/index_kraken_{basename}.log"
     shell:
         "kraken-build --download-taxonomy --db {output}; "
         "kraken-build --add-to-library {input} --db {output} --threads {threads}; "
@@ -79,13 +81,13 @@ rule index_kraken:
         "kraken-build --clean --db {output}"
 
 rule index_centrifuge_taxonomy:
-	params:
-		path="results/indicies/centrifuge_taxonomy"
-	output:
-		nodes="results/indices/centrifuge_taxonomy/nodes.dmp",
-		names="results/indicies/centrifuge_taxonomy/names.dmp"
-	shell:
-		"centrifuge-download -o taxonomy {params.path}"
+    params:
+        path="results/indicies/centrifuge_taxonomy"
+    output:
+        nodes="results/indices/centrifuge_taxonomy/nodes.dmp",
+        names="results/indicies/centrifuge_taxonomy/names.dmp"
+    shell:
+        "centrifuge-download -o taxonomy {params.path}"
 
 rule centrifugify_gmg:
     input:
@@ -97,18 +99,18 @@ rule centrifugify_gmg:
         "scripts/centrifugify_gmg.py"
 
 rule index_centrifuge:
-	input:
-		conversion_table="results/indices/centrifuge_{basename}.map",
-	    taxonomy_tree="results/indices/centrifuge_taxonomy/nodes.dmp",
-		name_table="results/indicies/centrifuge_taxonomy/names.dmp",
-		unpack(get_references),
-	output:
-    	"results/indices/centrifuge_{basename}"
+    input:
+        unpack(get_references),
+        conversion_table="results/indices/centrifuge_{basename}.map",
+        taxonomy_tree="results/indices/centrifuge_taxonomy/nodes.dmp",
+        name_table="results/indicies/centrifuge_taxonomy/names.dmp",
+    output:
+        "results/indices/centrifuge_{basename}"
     benchmark:
-    	"results/benchmarks/index_centrifuge_{basename}.log"
-	threads: 12
-	shell:
-		"centrifuge-build --conversion-table {input.conversion_table} --taxonomy-tree {input.taxonomy_tree} --name-table {input.name_table} {input.fasta} {output}"
+        "results/benchmarks/index_centrifuge_{basename}.log"
+    threads: 12
+    shell:
+        "centrifuge-build -p {threads} --conversion-table {input.conversion_table} --taxonomy-tree {input.taxonomy_tree} --name-table {input.name_table} {input.fasta} {output}"
 
 
 ### Benchmarks
