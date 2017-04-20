@@ -24,8 +24,8 @@ if config["settings"]["benchmarks"]:
     results.extend(expand("results/tables/benchmark_{context}_index.txt", context=config['contexts']))
 
 results.extend(expand("results/indices/{context}.ctr", context=config['contexts']))
-
-# results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
+results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
+results.extend(expand("results/indices/centrifuge_{context}", context=config['contexts']))
 
 rule all:
     input:
@@ -67,6 +67,8 @@ rule krakenify_gmg:
 rule index_kraken:
     input:
         "results/indices/kraken_{basename}.fna"
+    params:
+
     output:
         "results/indices/kraken_{basename}"
     threads: 12
@@ -76,7 +78,37 @@ rule index_kraken:
         "kraken-build --build --db {output}; "
         "kraken-build --clean --db {output}"
 
-# rule index_centrifuge:
+rule index_centrifuge_taxonomy:
+	params:
+		path="results/indicies/centrifuge_taxonomy"
+	output:
+		nodes="results/indices/centrifuge_taxonomy/nodes.dmp",
+		names="results/indicies/centrifuge_taxonomy/names.dmp"
+	shell:
+		"centrifuge-download -o taxonomy {params.path}"
+
+rule centrifugify_gmg:
+    input:
+        unpack(get_references),
+        mapping = "data/references/a2t.rs81.txt"
+    output:
+        "results/indices/centrifuge_{basename}.map"
+    script:
+        "scripts/centrifugify_gmg.py"
+
+rule index_centrifuge:
+	input:
+		conversion_table="results/indices/centrifuge_{basename}.map",
+	    taxonomy_tree="results/indices/centrifuge_taxonomy/nodes.dmp",
+		name_table="results/indicies/centrifuge_taxonomy/names.dmp",
+		unpack(get_references),
+	output:
+    	"results/indices/centrifuge_{basename}"
+    benchmark:
+    	"results/benchmarks/index_centrifuge_{basename}.log"
+	threads: 12
+	shell:
+		"centrifuge-build --conversion-table {input.conversion_table} --taxonomy-tree {input.taxonomy_tree} --name-table {input.name_table} {input.fasta} {output}"
 
 
 ### Benchmarks
