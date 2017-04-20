@@ -20,11 +20,11 @@ if config["settings"]["debug"]:
     import ipdb
 
 results = []
-if config["settings"]["benchmarks"]:
-    results.extend(expand("results/tables/benchmark_{context}_index.txt", context=config['contexts']))
+# if config["settings"]["benchmarks"]:
+    # results.extend(expand("results/tables/benchmark_{context}_index.txt", context=config['contexts']))
 
-results.extend(expand("results/indices/{context}.ctr", context=config['contexts']))
-results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
+# results.extend(expand("results/indices/{context}.ctr", context=config['contexts']))
+# results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
 results.extend(expand("results/indices/centrifuge_{context}", context=config['contexts']))
 
 rule all:
@@ -82,12 +82,12 @@ rule index_kraken:
 
 rule index_centrifuge_taxonomy:
     params:
-        path="results/indicies/centrifuge_taxonomy"
+        path="results/indices/centrifuge_taxonomy"
     output:
         nodes="results/indices/centrifuge_taxonomy/nodes.dmp",
-        names="results/indicies/centrifuge_taxonomy/names.dmp"
+        names="results/indices/centrifuge_taxonomy/names.dmp"
     shell:
-        "centrifuge-download -o taxonomy {params.path}"
+        "centrifuge-download -o {params.path} taxonomy"
 
 rule centrifugify_gmg:
     input:
@@ -103,7 +103,7 @@ rule index_centrifuge:
         unpack(get_references),
         conversion_table="results/indices/centrifuge_{basename}.map",
         taxonomy_tree="results/indices/centrifuge_taxonomy/nodes.dmp",
-        name_table="results/indicies/centrifuge_taxonomy/names.dmp",
+        name_table="results/indices/centrifuge_taxonomy/names.dmp",
     output:
         "results/indices/centrifuge_{basename}"
     benchmark:
