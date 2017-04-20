@@ -20,11 +20,11 @@ if config["settings"]["debug"]:
     import ipdb
 
 results = []
-# if config["settings"]["benchmarks"]:
-    # results.extend(expand("results/tables/benchmark_{context}_index.txt", context=config['contexts']))
+if config["settings"]["benchmarks"]:
+    results.extend(expand("results/tables/benchmark_{context}_index.txt", context=config['contexts']))
 
-# results.extend(expand("results/indices/{context}.ctr", context=config['contexts']))
-# results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
+results.extend(expand("results/indices/{context}.ctr", context=config['contexts']))
+results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
 results.extend(expand("results/indices/centrifuge_{context}", context=config['contexts']))
 
 rule all:
@@ -104,13 +104,17 @@ rule index_centrifuge:
         conversion_table="results/indices/centrifuge_{basename}.map",
         taxonomy_tree="results/indices/centrifuge_taxonomy/nodes.dmp",
         name_table="results/indices/centrifuge_taxonomy/names.dmp",
+    params:
+        path = "results/indices/centrifuge_{basename}/centrifuge_{basename}"
     output:
-        "results/indices/centrifuge_{basename}"
+        "results/indices/centrifuge_{basename}/centrifuge_{basename}.1.cf"
+        "results/indices/centrifuge_{basename}/centrifuge_{basename}.2.cf"
+        "results/indices/centrifuge_{basename}/centrifuge_{basename}.3.cf"
     benchmark:
         "results/benchmarks/index_centrifuge_{basename}.log"
     threads: 12
     shell:
-        "centrifuge-build -p {threads} --conversion-table {input.conversion_table} --taxonomy-tree {input.taxonomy_tree} --name-table {input.name_table} {input.fasta} {output}"
+        "centrifuge-build -p {threads} --conversion-table {input.conversion_table} --taxonomy-tree {input.taxonomy_tree} --name-table {input.name_table} {input.fasta} {params.path}"
 
 
 ### Benchmarks
