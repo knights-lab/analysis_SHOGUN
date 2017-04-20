@@ -14,7 +14,7 @@ def time_to_seconds(time):
 
 rows = [('seconds_wall_clock', 'kbyte_memory', 'percent_cpu', 'hours_cpu', 'tool')]
 for file_path in snakemake.input:
-	tool = file_path.split(".")[-3]
+	tool = file_path.split("_")[-2]
 	wall_clocks = []
 	memories = []
 	percent_cpus = []

@@ -25,6 +25,8 @@ if config["settings"]["benchmarks"]:
 
 results.extend(expand("results/indices/{context}.ctr", context=config['contexts']))
 
+# results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
+
 rule all:
     input:
         results
@@ -48,10 +50,34 @@ rule index_utree:
         ctr = "results/indices/{basename}.ctr",
         log = "results/indices/{basename}.log",
     shell:
-        "utree-build {input.fasta} {input.tax} {params.ubt} {threads}"
-        "utree-compress {params.ubt} {output.ctr}"
-        "mv {params.ubt}.ubt.log {output.log}"
+        "utree-build {input.fasta} {input.tax} {params.ubt} {threads}; "
+        "utree-compress {params.ubt} {output.ctr}; "
+        "mv {params.ubt}.log {output.log}; "
         "rm {params.ubt}"
+
+rule krakenify_gmg:
+    input:
+        unpack(get_references),
+        mapping = "data/references/a2t.rs81.txt"
+    output:
+        "results/indices/kraken_{basename}.fna"
+    script:
+        "scripts/krakenify_gmg.py"
+
+rule index_kraken:
+    input:
+        "results/indices/kraken_{basename}.fna"
+    output:
+        "results/indices/kraken_{basename}"
+    threads: 12
+    shell:
+        "kraken-build --download-taxonomy --db {output}; "
+        "kraken-build --add-to-library {input} --db {output} --threads {threads}; "
+        "kraken-build --build --db {output}; "
+        "kraken-build --clean --db {output}"
+
+# rule index_centrifuge:
+
 
 ### Benchmarks
 
@@ -67,7 +93,7 @@ rule benchmark_index_utree:
     threads: 12
     run:
         shell("/usr/bin/time -v sh -c 'utree-build {input.fasta} {input.tax} {params.ubt} {threads}; utree-compress {params.ubt} {params.ctr}' >> {output.benchmark} 2>&1")
-        shell("rm {params.ubt}.ubt.log")
+        shell("rm {params.ubt}.log")
         shell("rm {params.ubt}")
         shell("rm {params.ctr}")
 
