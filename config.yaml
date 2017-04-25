@@ -3,6 +3,7 @@ reference:
   miniGWG: "data/references/miniGWG"
   megaGMG: "data/references/megaGMG"
   megaGWG: "data/references/megaGWG"
+  miniGWG_darth: "data/references/miniGWG_darth"
 
 settings:
   benchmarks: true

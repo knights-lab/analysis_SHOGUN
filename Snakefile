@@ -25,7 +25,15 @@ if config["settings"]["benchmarks"]:
 
 results.extend(expand("results/indices/{context}.ctr", context=config['contexts']))
 results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
-results.extend(expand("results/indices/centrifuge_{context}", context=config['contexts']))
+results.extend(expand("results/indices/centrifuge_{context}/centrifuge_{context}.{k}.cf", context=config['contexts'], k=[1,2,3]))
+
+UDS_RUNS = ['160729_K00180_0226_AH7WCCBBXX', '160729_K00180_0227_BHCT3LBBXX']
+UDS_SAMPLES = []
+for run in UDS_RUNS:
+    temp, = glob_wildcards("data/hiseq4000/%s/{sample_name}.fastq.gz" % run)
+    UDS_SAMPLES.extend(temp)
+
+results.extend(expand("results/uds/{uds_run}/{sample_name}_{context}.b6", context=['miniGWG_darth'], uds_run=UDS_RUNS, samples_name=UDS_SAMPLES))
 
 rule all:
     input:
@@ -40,6 +48,13 @@ def get_references(wildcards):
     tax = expand("{path}/{basename}.tax", path=config["reference"][wildcards.basename], basename=wildcards.basename)
     return dict(zip(("fasta", "tax"), (fasta, tax)))
 
+def get_embalmer_references(wildcards):
+    edx = expand("{path}/{basename}.edx", path=config["reference"][wildcards.basename], basename=wildcards.basename)
+    acx = expand("{path}/{basename}.acx", path=config["reference"][wildcards.basename], basename=wildcards.basename)
+    tax = expand("{path}/{basename}.tax", path=config["reference"][wildcards.basename], basename=wildcards.basename)
+    return dict(zip(("edx", "acx", "tax"), (edx, acx, tax)))
+
+
 ### Index Creation
 rule index_utree:
     input:
@@ -49,6 +64,8 @@ rule index_utree:
     output:
         ctr = "results/indices/{basename}.ctr",
         log = "results/indices/{basename}.log",
+    benchmark:
+        "results/benchmarks/index_utree_{basename}.log"
     shell:
         "utree-build {input.fasta} {input.tax} {params.ubt} {threads}; "
         "utree-compress {params.ubt} {output.ctr}; "
@@ -107,9 +124,9 @@ rule index_centrifuge:
     params:
         path = "results/indices/centrifuge_{basename}/centrifuge_{basename}"
     output:
-        "results/indices/centrifuge_{basename}/centrifuge_{basename}.1.cf"
-        "results/indices/centrifuge_{basename}/centrifuge_{basename}.2.cf"
-        "results/indices/centrifuge_{basename}/centrifuge_{basename}.3.cf"
+        "results/indices/centrifuge_{basename}/centrifuge_{basename}.1.cf",
+        "results/indices/centrifuge_{basename}/centrifuge_{basename}.2.cf",
+        "results/indices/centrifuge_{basename}/centrifuge_{basename}.3.cf",
     benchmark:
         "results/benchmarks/index_centrifuge_{basename}.log"
     threads: 12
@@ -118,6 +135,7 @@ rule index_centrifuge:
 
 
 ### Benchmarks
+
 
 ### Indexing of Databases
 rule benchmark_index_utree:
@@ -142,6 +160,58 @@ rule combine_benchmarks:
         "results/benchmarks/combined_index_{tool}_{basename}.log"
     shell:
         "cat {input} > {output}"
+
+### Ultra-Deep Sequencing
+rule extract_uds:
+    input:
+        "data/hiseq4000/{uds_run}/{sample_name}.fastq.gz"
+    output:
+        temp("results/uds/temp/{uds_run}/{sample_name}/{sample_name}.fastq")
+    shell:
+        "7z x {input} -o {output}"
+
+rule quality_control_uds:
+    input:
+        "results/uds/temp/{uds_run}/{sample_name}/{sample_name}.fastq"
+    params:
+        "results/uds/temp/{uds_run}/{sample_name}"
+    output:
+        temp("results/uds/temp/{uds_run}/shi7/{sample_name}.fastq")
+    shell:
+        "shi7.py -SE --combine_fasta False -i {params} -o {output} --adaptor Nextera -trim_q 32 -filter_q 36 --strip_underscore"
+
+rule emb_place_on_ramdisk:
+    input:
+        unpack(get_embalmer_references)
+    output:
+        temp("/dev/shm/{context}.edx"),
+        temp("/dev/shm/{context}.adx"),
+        temp("/dev/shm/{context}.tax"),
+
+rule align_uds:
+    input:
+        queries = "results/uds/temp/{uds_run}/{sample_name}/{shi7_name}.fna",
+        edx = "/dev/shm/{context}.edx",
+        acx = "/dev/shm/{context}.adx",
+        tax = "/dev/shm/{context}.tax",
+    benchmark:
+        "results/benchmarks/{sample_name}_emb15_{context}.log"
+    output:
+        "/dev/shm/uds/{uds_run}/{sample_name}_{context}.b6"
+    threads:
+        12
+    shell:
+        "emb15 -r {input.edx} -a {input.adx} -b {input.tax} -q {input.queries} -o {output} -n -m CAPITALIST -bs -fr -i .98 -sa -t {threads}"
+
+rule move_uds:
+    input:
+        "/dev/shm/uds/{uds_run}/{sample_name}_{context}.b6"
+    output:
+        "results/uds/{uds_run}/{sample_name}_{context}.b6"
+    shell:
+        "mv {input} {output}"
+
+
 
 ### Tables
 rule table_index_benchmarks:
