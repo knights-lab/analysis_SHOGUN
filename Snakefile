@@ -27,13 +27,13 @@ results.extend(expand("results/indices/{context}.ctr", context=config['contexts'
 results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
 results.extend(expand("results/indices/centrifuge_{context}/centrifuge_{context}.{k}.cf", context=config['contexts'], k=[1,2,3]))
 
+### UDS
 UDS_RUNS = ['160729_K00180_0226_AH7WCCBBXX', '160729_K00180_0227_BHCT3LBBXX']
-UDS_SAMPLES = []
-for run in UDS_RUNS:
-    temp, = glob_wildcards("data/hiseq4000/%s/{sample_name}.fastq.gz" % run)
-    UDS_SAMPLES.extend(temp)
 
-results.extend(expand("results/uds/{uds_run}/{sample_name}_{context}.b6", context=['miniGWG_darth'], uds_run=UDS_RUNS, samples_name=UDS_SAMPLES))
+for run in UDS_RUNS:
+    path = "data/hiseq4000/%s" % run
+    sample_names, = glob_wildcards(path + "/{sample_name}.fastq.gz")
+    results.extend(expand("results/uds/{uds_run}.{sample_name}.{context}.b6", context=['miniGWG_darth'], uds_run=run, sample_name=sample_names))
 
 rule all:
     input:
@@ -49,9 +49,9 @@ def get_references(wildcards):
     return dict(zip(("fasta", "tax"), (fasta, tax)))
 
 def get_embalmer_references(wildcards):
-    edx = expand("{path}/{basename}.edx", path=config["reference"][wildcards.basename], basename=wildcards.basename)
-    acx = expand("{path}/{basename}.acx", path=config["reference"][wildcards.basename], basename=wildcards.basename)
-    tax = expand("{path}/{basename}.tax", path=config["reference"][wildcards.basename], basename=wildcards.basename)
+    edx = expand("{path}/{basename}.edx", path=config["reference"][wildcards.context], basename=wildcards.context)
+    acx = expand("{path}/{basename}.acx", path=config["reference"][wildcards.context], basename=wildcards.context)
+    tax = expand("{path}/{basename}.tax", path=config["reference"][wildcards.context], basename=wildcards.context)
     return dict(zip(("edx", "acx", "tax"), (edx, acx, tax)))
 
 
@@ -166,48 +166,54 @@ rule extract_uds:
     input:
         "data/hiseq4000/{uds_run}/{sample_name}.fastq.gz"
     output:
-        temp("results/uds/temp/{uds_run}/{sample_name}/{sample_name}.fastq")
+        temp("/dev/shm/uds/{uds_run}.{sample_name}/{sample_name}.fastq")
     shell:
-        "7z x {input} -o {output}"
+        "7z x {input} -so > {output}"
 
 rule quality_control_uds:
     input:
-        "results/uds/temp/{uds_run}/{sample_name}/{sample_name}.fastq"
+        "/dev/shm/uds/{uds_run}.{sample_name}/{sample_name}.fastq"
     params:
-        "results/uds/temp/{uds_run}/{sample_name}"
+        "/dev/shm/uds/{uds_run}.{sample_name}"
+    priority: 1
     output:
-        temp("results/uds/temp/{uds_run}/shi7/{sample_name}.fastq")
+        temp("/dev/shm/uds/{uds_run}.{sample_name}/combined_seqs.fna"),
+        temp("/dev/shm/uds/{uds_run}.{sample_name}/shi7.log"),
     shell:
-        "shi7.py -SE --combine_fasta False -i {params} -o {output} --adaptor Nextera -trim_q 32 -filter_q 36 --strip_underscore"
+        "shi7.py -SE --combine_fasta True -i {params} -o {params} --adaptor Nextera -trim_q 32 -filter_q 36 --strip_underscore True"
 
 rule emb_place_on_ramdisk:
     input:
         unpack(get_embalmer_references)
+    priority: 2
     output:
-        temp("/dev/shm/{context}.edx"),
-        temp("/dev/shm/{context}.adx"),
-        temp("/dev/shm/{context}.tax"),
+        edx = temp("/dev/shm/uds/{context}.edx"),
+        acx = temp("/dev/shm/uds/{context}.acx"),
+        tax = temp("/dev/shm/uds/{context}.tax"),
+    shell:
+        "cp {input.edx} {output.edx}; cp {input.acx} {output.acx}; cp {input.tax} {output.tax}"
 
 rule align_uds:
     input:
-        queries = "results/uds/temp/{uds_run}/{sample_name}/{shi7_name}.fna",
-        edx = "/dev/shm/{context}.edx",
-        acx = "/dev/shm/{context}.adx",
-        tax = "/dev/shm/{context}.tax",
+        queries = "/dev/shm/uds/{uds_run}.{sample_name}/combined_seqs.fna",
+        edx = "/dev/shm/uds/{context}.edx",
+        acx = "/dev/shm/uds/{context}.acx",
+        tax = "/dev/shm/uds/{context}.tax",
     benchmark:
-        "results/benchmarks/{sample_name}_emb15_{context}.log"
+        "results/benchmarks/{sample_name}.emb15.{context}.log"
+    priority: 3
     output:
-        "/dev/shm/uds/{uds_run}/{sample_name}_{context}.b6"
-    threads:
-        12
+        temp("/dev/shm/uds/{uds_run}.{sample_name}.{context}.b6")
+    threads: 12
     shell:
-        "emb15 -r {input.edx} -a {input.adx} -b {input.tax} -q {input.queries} -o {output} -n -m CAPITALIST -bs -fr -i .98 -sa -t {threads}"
+        "emb15 -r {input.edx} -a {input.acx} -b {input.tax} -q {input.queries} -o {output} -n -m CAPITALIST -bs -fr -i .98 -sa -t 48"
 
 rule move_uds:
     input:
-        "/dev/shm/uds/{uds_run}/{sample_name}_{context}.b6"
+        "/dev/shm/uds/{uds_run}.{sample_name}.{context}.b6"
     output:
-        "results/uds/{uds_run}/{sample_name}_{context}.b6"
+        "results/uds/{uds_run}.{sample_name}.{context}.b6"
+    priority: 4
     shell:
         "mv {input} {output}"
 

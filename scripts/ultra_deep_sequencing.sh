@@ -1,4 +1,4 @@
-for file in *R1.fastq.gz
+for file in *.fastq.gz
 do
     source deactivate
     7z x $file -o shi7en_tmp/
