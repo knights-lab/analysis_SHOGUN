@@ -180,7 +180,7 @@ rule quality_control_uds:
         temp("/dev/shm/uds/{uds_run}.{sample_name}/combined_seqs.fna"),
         temp("/dev/shm/uds/{uds_run}.{sample_name}/shi7.log"),
     shell:
-        "shi7.py -SE --combine_fasta True -i {params} -o {params} --adaptor Nextera -trim_q 32 -filter_q 36 --strip_underscore True"
+        "shi7.py -SE --combine_fasta True -i {params} -o {params} --adaptor Nextera -trim_q 32 -filter_q 36 --strip_underscore True -t 24"
 
 rule emb_place_on_ramdisk:
     input:
@@ -199,12 +199,10 @@ rule align_uds:
         edx = "/dev/shm/uds/{context}.edx",
         acx = "/dev/shm/uds/{context}.acx",
         tax = "/dev/shm/uds/{context}.tax",
-    benchmark:
-        "results/benchmarks/{sample_name}.emb15.{context}.log"
+    benchmark: "results/benchmarks/{sample_name}.emb15.{context}.log"
     priority: 3
-    output:
-        temp("/dev/shm/uds/{uds_run}.{sample_name}.{context}.b6")
-    threads: 12
+    output: temp("/dev/shm/uds/{uds_run}.{sample_name}.{context}.b6")
+    log: "results/logs/{sample_name}.emb15.{context}.log"
     shell:
         "emb15 -r {input.edx} -a {input.acx} -b {input.tax} -q {input.queries} -o {output} -n -m CAPITALIST -bs -fr -i .98 -sa -t 48"
 
