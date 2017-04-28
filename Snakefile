@@ -204,7 +204,7 @@ rule align_uds:
     output: temp("/dev/shm/uds/{uds_run}.{sample_name}.{context}.b6")
     log: "results/logs/{sample_name}.emb15.{context}.log"
     shell:
-        "emb15 -r {input.edx} -a {input.acx} -b {input.tax} -q {input.queries} -o {output} -n -m CAPITALIST -bs -fr -i .98 -sa -t 48"
+        "emb15 -r {input.edx} -a {input.acx} -b {input.tax} -q {input.queries} -o {output} -n -m CAPITALIST -bs -fr -i .98 -sa -t 48 2> {log}"
 
 rule move_uds:
     input:
