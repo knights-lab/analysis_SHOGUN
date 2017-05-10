@@ -1,0 +1,11 @@
+#!/bin/bash -l
+#PBS -l walltime=96:00:00,nodes=1:ppn=32,mem=998gb
+#PBS -m abe
+#PBS -M MY_X500_EMAIL_ADDRESS@umn.edu
+#PBS -q ram1t
+module load python
+rm -r /dev/shm/*
+~/membomb
+cp /scratch/mycrap/* /dev/shm/
+# run stuff...
+
