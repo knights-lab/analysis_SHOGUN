@@ -27,7 +27,7 @@ results.extend(expand("results/indices/{context}.ctr", context=config['contexts'
 results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
 results.extend(expand("results/indices/centrifuge_{context}/centrifuge_{context}.{k}.cf", context=config['contexts'], k=[1,2,3]))
 
-strains, depths, = glob_wildcards("data/single_strain/{strain}_analysis/embalmer_results/taxatable_{strain}{depth}.txt")
+strains, _, depths, = glob_wildcards("data/single_strain/{strain1}_analysis/embalmer_results/taxatable_{strain2}{depth}.txt")
 resuts.extend(expand("results/single_strain/{strain}/{strain}{depth}.{level}.txt", strain=strain, depth=depths, level=["strain", "species"]))
 
 #ecoli_b6_files/
