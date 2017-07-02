@@ -27,6 +27,13 @@ results.extend(expand("results/indices/{context}.ctr", context=config['contexts'
 results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
 results.extend(expand("results/indices/centrifuge_{context}/centrifuge_{context}.{k}.cf", context=config['contexts'], k=[1,2,3]))
 
+strains, depths, = glob_wildcards("data/single_strain/{strain}_analysis/embalmer_results/taxatable_{strain}{depth}.txt")
+resuts.extend(expand("results/single_strain/{strain}/{strain}{depth}.{level}.txt", strain=strain depth=depths, level=["strain", "species"]))
+
+#ecoli_b6_files/
+#/project/flatiron2/analysis_SHOGUN/data/single_strain/kpneumoniae_analysis/kpneumoniae_b6_files/
+#/project/flatiron2/analysis_SHOGUN/data/single_strain/saureus_analysis/saureus_b6_files/
+
 ### UDS
 UDS_RUNS = ['160729_K00180_0226_AH7WCCBBXX', '160729_K00180_0227_BHCT3LBBXX']
 
@@ -215,7 +222,16 @@ rule move_uds:
     shell:
         "mv {input} {output}"
 
-
+### Single Strain
+rule single_strain_redistribute_strain:
+    input:
+        "{path}/taxatable_{strain}.{level}.txt"
+    params:
+        redis = config["redistribute"],
+    output:
+        "results/stingle_strain/taxatable_{strain}.strain.txt"
+    shell:
+        "shogun redistribute --input {input} --output {output} --level  {level} --strain {params}"
 
 ### Tables
 rule table_index_benchmarks:
