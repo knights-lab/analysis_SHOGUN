@@ -27,8 +27,8 @@ results.extend(expand("results/indices/{context}.ctr", context=config['contexts'
 results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
 results.extend(expand("results/indices/centrifuge_{context}/centrifuge_{context}.{k}.cf", context=config['contexts'], k=[1,2,3]))
 
-strains, _, depths, = glob_wildcards("data/single_strain/{strain1}_analysis/embalmer_results/taxatable_{strain2}{depth}.txt")
-results.extend(expand("results/single_strain/{strain}/{strain}{depth}.{level}.txt", strain=strains, depth=depths, level=["strain", "species"]))
+strains, depths, = glob_wildcards("data/single_strain/{strain}_analysis/embalmer_results/taxatable_{basename}.txt")
+results.extend(expand("results/single_strain/{basename}.{level}.txt", basename=basenames, depth=depths, level=["strain", "species"]))
 
 #ecoli_b6_files/
 #/project/flatiron2/analysis_SHOGUN/data/single_strain/kpneumoniae_analysis/kpneumoniae_b6_files/
