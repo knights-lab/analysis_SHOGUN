@@ -5,7 +5,7 @@ reference:
   megaGWG: "data/references/megaGWG"
   miniGWG_darth: "data/references/miniGWG_darth"
 
-redistribute: "data/shogun/sheared_bayes.txt"
+redistribute: "data/shogun/database/sheared_bayes.txt"
 
 settings:
   benchmarks: true

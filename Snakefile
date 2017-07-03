@@ -27,8 +27,8 @@ results.extend(expand("results/indices/{context}.ctr", context=config['contexts'
 results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
 results.extend(expand("results/indices/centrifuge_{context}/centrifuge_{context}.{k}.cf", context=config['contexts'], k=[1,2,3]))
 
-strains, basenames, = glob_wildcards("data/single_strain/{strain}_analysis/embalmer_results/taxatable_{basename}.txt")
-results.extend(expand("results/single_strain/{basename}.{level}.txt", basename=basenames, depth=depths, level=["strain", "species"]))
+basenames, = glob_wildcards("data/single_strains/taxatable_{basename}.txt")
+results.extend(expand("results/single_strains/taxatable_{basename}.{level}.txt", basename=basenames, level=["strain", "species",  "genus"]))
 
 #ecoli_b6_files/
 #/project/flatiron2/analysis_SHOGUN/data/single_strain/kpneumoniae_analysis/kpneumoniae_b6_files/
@@ -40,7 +40,7 @@ UDS_RUNS = ['160729_K00180_0226_AH7WCCBBXX', '160729_K00180_0227_BHCT3LBBXX']
 for run in UDS_RUNS:
     path = "data/hiseq4000/%s" % run
     sample_names, = glob_wildcards(path + "/{sample_name}.fastq.gz")
-    results.extend(expand("results/uds/{uds_run}.{sample_name}.{context}.b6", context=['miniGWG_darth'], uds_run=run, sample_name=sample_names))
+    #results.extend(expand("results/uds/{uds_run}.{sample_name}.{context}.b6", context=['miniGWG_darth'], uds_run=run, sample_name=sample_names))
 
 rule all:
     input:
@@ -225,13 +225,13 @@ rule move_uds:
 ### Single Strain
 rule single_strain_redistribute_strain:
     input:
-        "{path}/taxatable_{strain}.{level}.txt"
+        "data/single_strains/taxatable_{basename}.txt"
     params:
-        redis = config["redistribute"],
+        redis = config["redistribute"]
     output:
-        "results/stingle_strain/taxatable_{strain}.strain.txt"
+        "results/single_strains/taxatable_{basename}.{level}.txt"
     shell:
-        "shogun redistribute --input {input} --output {output} --level  {level} --strain {params}"
+        "shogun redistribute --input {input} --output {output} --level {wildcards.level} --shear {params}"
 
 ### Tables
 rule table_index_benchmarks:
