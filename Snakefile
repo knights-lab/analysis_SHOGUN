@@ -27,8 +27,12 @@ results.extend(expand("results/indices/{context}.ctr", context=config['contexts'
 results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
 results.extend(expand("results/indices/centrifuge_{context}/centrifuge_{context}.{k}.cf", context=config['contexts'], k=[1,2,3]))
 
+# Single strain redistribution
 basenames, = glob_wildcards("data/single_strains/taxatable_{basename}.txt")
 results.extend(expand("results/single_strains/taxatable_{basename}.{level}.txt", basename=basenames, level=["strain", "species",  "genus"]))
+
+# Shearing of the database
+#basenames, = glob_wildcards("data/single_strains/")
 
 #ecoli_b6_files/
 #/project/flatiron2/analysis_SHOGUN/data/single_strain/kpneumoniae_analysis/kpneumoniae_b6_files/
@@ -91,8 +95,6 @@ rule krakenify_gmg:
 rule index_kraken:
     input:
         "results/indices/kraken_{basename}.fna"
-    params:
-
     output:
         "results/indices/kraken_{basename}"
     threads: 12
@@ -104,15 +106,6 @@ rule index_kraken:
         "kraken-build --build --db {output}; "
         "kraken-build --clean --db {output}"
 
-rule index_centrifuge_taxonomy:
-    params:
-        path="results/indices/centrifuge_taxonomy"
-    output:
-        nodes="results/indices/centrifuge_taxonomy/nodes.dmp",
-        names="results/indices/centrifuge_taxonomy/names.dmp"
-    shell:
-        "centrifuge-download -o {params.path} taxonomy"
-
 rule centrifugify_gmg:
     input:
         unpack(get_references),
@@ -121,6 +114,15 @@ rule centrifugify_gmg:
         "results/indices/centrifuge_{basename}.map"
     script:
         "scripts/centrifugify_gmg.py"
+
+rule index_centrifuge_taxonomy:
+    params:
+        path="results/indices/centrifuge_taxonomy"
+    output:
+        nodes="results/indices/centrifuge_taxonomy/nodes.dmp",
+        names="results/indices/centrifuge_taxonomy/names.dmp"
+    shell:
+        "centrifuge-download -o {params.path} taxonomy"
 
 rule index_centrifuge:
     input:
@@ -140,6 +142,58 @@ rule index_centrifuge:
     shell:
         "centrifuge-build -p {threads} --conversion-table {input.conversion_table} --taxonomy-tree {input.taxonomy_tree} --name-table {input.name_table} {input.fasta} {params.path}"
 
+
+### Index LinDarth
+rule krakenify_lindarth:
+    input:
+        fasta="data/references/linear/rep82_combined.fixed.fna",
+        tax="data/references/linear/rep82_combined.fixed.tax",
+        mapping="data/references/a2t.rs81.txt",       
+    output:
+        "results/indices/kraken_lindarth.fna"
+    script:
+        "scripts/krakenify_gmg.py"
+
+rule krakenify_lindarthdusted:
+    input:
+        fasta="data/references/linear/rep82_combined.dusted.fna",
+        tax="data/references/linear/rep82_combined.fixed.tax",
+        mapping="data/references/a2t.rs81.txt",       
+    output:
+        "results/indices/kraken_lindarthdusted.fna"
+    script:
+        "scripts/krakenify_gmg.py"
+
+rule centrifugify_lindarth:
+    input:
+        fasta="data/references/linear/rep82_combined.fixed.fna",
+        tax="data/references/linear/rep82_combined.fixed.tax",
+        mapping="data/references/a2t.rs81.txt",
+    output:
+        "results/indices/centrifuge_lindarth.map",
+    benchmark:
+        "results/benchmarks/index_centrifuge_lindarth.log",
+    script:
+        "scripts/centrifugify_gmg.py"
+
+rule centrifugify_lindarthdusted:
+    input:
+        fasta="data/references/linear/rep82_combined.dusted.hard.fna",
+        tax="data/references/linear/rep82_combined.fixed.tax",
+        mapping="data/references/a2t.rs81.txt",
+    output:
+        "results/indices/centrifuge_lindarthdusted.map"
+    benchmark:
+        "results/benchmarks/index_centrifuge_lindarthdusted.log"
+    script:
+        "scripts/centrifugify_gmg.py"
+
+rule lindarth:
+    input:
+        [ "results/indices/centrifuge_lindarthdusted.map", 
+        "results/indices/centrifuge_lindarth.map", 
+        "results/indices/kraken_lindarth.fna", 
+        "results/indices/kraken_lindarthdusted.fna"]
 
 ### Benchmarks
 
