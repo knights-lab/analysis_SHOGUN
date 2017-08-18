@@ -14,5 +14,7 @@ with open(snakemake.output[0], 'w') as outf:
 	with open(snakemake.input.tax[0]) as inf:
 		csv_inf = csv.reader(inf, delimiter='\t')
 		for row in csv_inf:
-			row[1] = accession2taxid[row[0]]
-			csv_outf.writerow(row)
+			title = row[0].split(".")[0]
+			if title in accession2taxid:
+				row[1] = accession2taxid[title]
+				csv_outf.writerow(row)

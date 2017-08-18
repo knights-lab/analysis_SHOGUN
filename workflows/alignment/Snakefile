@@ -1,0 +1,30 @@
+"""
+Analysis for the SHOGUN paper
+"""
+
+__author__ = "Benjamin Hillmann"
+__license__ = "MIT"
+
+from snakemake.utils import min_version
+import os
+
+min_version("3.11.2")
+
+## Include the config
+configile: "config.yaml"
+
+rule centrifuge_align:
+    input:
+        "results/indices/centrifuge_{basename}/centrifuge_{basename}.1.cf",
+        "results/indices/centrifuge_{basename}/centrifuge_{basename}.2.cf",
+        "results/indices/centrifuge_{basename}/centrifuge_{basename}.3.cf",
+        queries="results/benchmarks/",
+    params:
+        database="results/indices/centrifuge_{basename}/centrifuge_{basename}"
+    output:
+
+    benchmark:
+
+    shell:
+
+    threads: 12
