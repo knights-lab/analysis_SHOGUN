@@ -1,0 +1,28 @@
+#!/usr/bin/env ipython
+from glob import glob
+import os
+
+# Infiles
+ecoli_infiles = glob.glob("data/single_strain/ecoli_analysis/ecoli_combined_seqs/*.fna")
+saureus_infiles = glob.glob("data/single_strain/saureus_analysis/saureus_combined_seqs/*.fna")
+kpneumoniae_infiles = glob.glob("data/single_strain/kpneumoniae_analysis/kpneumo_combined_seqs/*.fna")
+strains = ['ecoli', 'saureus', 'kpneumoniae']
+strains_dict = dict(zip(strains, [ecoli_infiles, saureus_infiles, kpneumoniae_infiles]))
+
+shogun_command = "/usr/bin/time -v shogun --log debug --shell pipeline --input {input} --database {database} --aligner {aligner} --output {outfolder} --threads 32 --level species &> {outfolder}/timing.txt"
+aligner = 'all'
+databases = os.path.abspath("data/references/rep82")
+
+db_base = os.path.basename(database)
+!cp -r {database} /dev/shm/{db_base}
+
+for strain in strains:
+    for inf in strains_dict[strain]:
+        size = os.path.basename(inf).split('.')[-2]
+        if "fulldepth" in size:
+            size = "fulldepth"
+        outfolder = "results/single_strains_shogun/{}_{}".format(strain, size) 
+        command = shogun_command.format(database =database, input=inf, outfolder=outfolder, aligner="all")
+        !{command}
+
+!rm -rf /dev/shm/{db_base}

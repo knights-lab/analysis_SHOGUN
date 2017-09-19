@@ -41,8 +41,8 @@ results.extend(expand("results/single_strains/taxatable_{basename}.{level}.txt",
 #/project/flatiron2/analysis_SHOGUN/data/single_strain/saureus_analysis/saureus_b6_files/
 
 ### UDS
-UDS_RUNS = ['160729_K00180_0226_AH7WCCBBXX', '160729_K00180_0227_BHCT3LBBXX']
-
+#UDS_RUNS = ['160729_K00180_0226_AH7WCCBBXX', '160729_K00180_0227_BHCT3LBBXX']
+UDS_RUNS = ['160729_K00180_0226_AH7WCCBBXX']
 for run in UDS_RUNS:
     path = "data/hiseq4000/%s" % run
     sample_names, = glob_wildcards(path + "/{sample_name}.fastq.gz")

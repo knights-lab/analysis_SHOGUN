@@ -1,0 +1,4 @@
+	num_reads	bps	filename	bases_per_read
+0	10000000	923236223	HiSeq_timing	92.3236223
+1	10000000	1568044727	MiSeq_timing	156.8044727
+2	10000000	1000000000	simBA5_timing	100.0
