@@ -1,4 +1,3 @@
-#!/usr/bin/env ipython
 import glob
 import os
 
@@ -11,6 +10,7 @@ replicates = 5
 ecoli_infiles = glob.glob("data/single_strain/ecoli_analysis/ecoli_combined_seqs/*fulldepth.fna")
 saureus_infiles = glob.glob("data/single_strain/saureus_analysis/saureus_combined_seqs/*fulldepth.fna")
 kpneumoniae_infiles = glob.glob("data/single_strain/kpneumoniae_analysis/kpneumo_combined_seqs/*fulldepth.fna")
+
 strains = ['ecoli', 'saureus', 'kpneumoniae']
 strains_dict = dict(zip(strains, [ecoli_infiles, saureus_infiles, kpneumoniae_infiles]))
 
