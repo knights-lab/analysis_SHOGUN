@@ -1,0 +1,28 @@
+#!/usr/bin/env ipython
+from glob import glob
+import os
+
+kraken_timing_file = os.path.abspath("./data/kraken_timing/combined/combined_seqs.fna")
+
+centrifuge_command = "/usr/bin/time -v centrifuge -f -x {database} {input} -S /dev/shm/centrifuge_{replicate}_{threads}/classification.txt --report-file /dev/shm/centrifuge_{replicate}_{threads}/report.{replicate}.txt --threads {threads} &> {outfolder}/timing.{replicate}.threads.{threads}.txt"
+
+databases = ["./results/indices/centrifuge_rep82"]
+#databases = ["./results/indices/centrifuge_rep82", "./results/indices/centrifuge_rep82_dusted"]
+databases = map(os.path.abspath, databases)
+!/home/knightsd/algh0022/membomb
+
+for database in databases:
+    db_base = os.path.basename(database)
+    if not os.path.exists("./results/kraken_timing/{}".format(db_base)):
+        os.makedirs("./results/kraken_timing/{}".format(db_base))
+    !cp -r {database} /dev/shm/{db_base}
+    for threads in [32, 16, 8, 4, 2, 1]:
+        outfolder = os.path.abspath("./results/kraken_timing/{}".format(db_base))
+        for i in range(3):
+            replicate = i + 1
+            !mkdir /dev/shm/centrifuge_{replicate}_{threads}
+            command = centrifuge_command.format(replicate=replicate, database ="/dev/shm/{dbase}/{dbase}".format(dbase=db_base), input=kraken_timing_file, outfolder=outfolder, threads=threads)
+            !{command}
+            !ls -alh /dev/shm/centrifuge_{replicate}_{threads} > {outfolder}/{replicate}.{threads}.size.txt
+            !rm -rf /dev/shm/centrifuge_{replicate}_{threads}
+    !rm -rf /dev/shm/{db_base}

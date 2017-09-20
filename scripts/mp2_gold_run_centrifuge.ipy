@@ -1,0 +1,17 @@
+#!/usr/bin/env ipython
+from glob import glob
+import os
+
+kraken_timing_file = os.path.abspath("./data/mp2_gold/combined_seqs.fna")
+
+centrifuge_command = "/usr/bin/time -v centrifuge -f -x {database} {input} -S {outfolder}/classification.txt --report-file {outfolder}/report.txt --threads 32 &> {outfolder}/timing.txt"
+
+databases = ["./results/indices/centrifuge_rep82/centrifuge_rep82", "./results/indices/centrifuge_rep82_dusted/centrifuge_rep82_dusted"]
+databases = map(os.path.abspath, databases)
+
+for database in databases:
+    db_base = os.path.basename(database)
+    if not os.path.exists("./results/mp2_gold/{}".format(db_base)):
+        os.makedirs("./results/mp2_gold/{}".format(db_base))
+    command = centrifuge_command.format(database =database, input=kraken_timing_file, outfolder="./results/mp2_gold/{}".format(db_base))
+    !{command}

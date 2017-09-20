@@ -1,0 +1,17 @@
+#!/usr/bin/env ipython
+from glob import glob
+import os
+
+kraken_timing_file = os.path.abspath("./data/mp2_gold/combined_seqs.fna")
+
+shogun_command = "/usr/bin/time -v shogun --log debug --shell align --input {input} --database {database} --aligner {aligner} --output {outfolder} --threads 32 --level species &> {outfolder}/timing.txt"
+aligner = 'all'
+databases = ["./data/references/rep82", "./data/references/rep82_dusted"]
+databases = map(os.path.abspath, databases)
+
+for database in databases:
+    db_base = os.path.basename(database)
+    if not os.path.exists("./results/mp2_gold/{}".format(db_base)):
+        os.makedirs("./results/mp2_gold/{}".format(db_base))
+    command = shogun_command.format(database =database, input=kraken_timing_file, outfolder="./results/mp2_gold/{}".format(db_base), aligner="all")
+    !{command}

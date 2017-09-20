@@ -1,0 +1,28 @@
+#!/usr/bin/env ipython
+from glob import glob
+import os
+
+kraken_timing_file = os.path.abspath("./data/kraken_timing/combined/combined_seqs.fna")
+
+kraken_command = "/usr/bin/time -v  kraken --preload --db {database} {input} --output /dev/shm/kraken_{replicate}_{threads}/report.{replicate}.txt --threads {threads} &> {outfolder}/timing.{replicate}.threads.{threads}.txt"
+
+databases = ["./results/indices/kraken_rep82"]
+#databases = ["./results/indices/kraken_rep82", "./results/indices/kraken_rep82_dusted"]
+databases = map(os.path.abspath, databases)
+!/home/knightsd/algh0022/membomb
+
+for database in databases:
+    db_base = os.path.basename(database)
+    if not os.path.exists(os.path.abspath("./results/kraken_timing/{}".format(db_base))):
+        os.makedirs(os.path.abspath("./results/kraken_timing/{}".format(db_base)))
+    !cp -r {database} /dev/shm/{db_base}
+    for threads in [32, 16, 8, 4, 2, 1]:
+        outfolder = os.path.abspath("./results/kraken_timing/{}".format(db_base)) 
+	for i in range(3):
+            os.makedirs("/dev/shm/kraken_{replicate}_{threads}")
+            replicate = i + 1
+            command = kraken_command.format(replicate=replicate, database ="/dev/shm/" + db_base, input=kraken_timing_file, outfolder=outfolder, threads=threads)
+            !{command}
+            !ls -alh /dev/shm/kraken_{replicate}_{threads} > {outfolder}/{replicate}.{threads}.size.txt
+            !rm -rf /dev/shm/kraken_{replicate}_{threads}
+    !rm -rf /dev/shm/{db_base}

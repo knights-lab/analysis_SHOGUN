@@ -1,0 +1,27 @@
+#!/usr/bin/env ipython
+from glob import glob
+import os
+
+kraken_timing_file = os.path.abspath("./data/kraken_timing/combined/combined_seqs.fna")
+
+shogun_command = "/usr/bin/time -v shogun --log debug align --input {input} --database {database} --aligner {aligner} --output /dev/shm/{aligner}_{replicate}_{threads} --threads {threads} &> {outfolder}/timing.{replicate}.threads.{threads}.txt"
+
+#databases = ["./data/references/rep82", "./data/references/rep82_dusted"]
+databases = ["/home/knightsd/hillm096/globus/SHOGUN/rep82"]
+databases = map(os.path.abspath, databases)
+
+for database in databases:
+    db_base = os.path.basename(database)
+    !cp -r {database} /dev/shm/{db_base}
+    for aligner in ["utree", "burst", "bowtie2"]:
+        for threads in [32, 16, 8, 4, 2, 1]:
+            for i in [2, 3]:
+                outfolder = "./results/kraken_timing/{}_{}".format(aligner, db_base)
+                replicate = i + 1
+                command = shogun_command.format(replicate=replicate, database ="/dev/shm/{dbase}".format(dbase=db_base), input=kraken_timing_file, outfolder=outfolder, aligner=aligner, threads=threads)
+                if not os.path.exists("./results/kraken_timing/{}_{}".format(aligner, db_base)):
+                    os.makedirs("./results/kraken_timing/{}_{}".format(aligner, db_base))
+                !{command}
+                !ls -alh /dev/shm/{aligner}_{replicate}_{threads} > {outfolder}/{replicate}.{threads}.size.txt
+                !rm -rf /dev/shm/{aligner}_{replicate}_{threads}
+    #!rm -rf /dev/shm/{db_base}
