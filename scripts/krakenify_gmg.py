@@ -14,6 +14,7 @@ with open(snakemake.output[0], 'w') as outf:
 	with open(snakemake.input.fasta[0]) as inf:
 		parser = FASTA(inf)
 		for title, seq in parser.read():
-			if title in accession2taxid:
-				taxid = accession2taxid[title]
+			rowname = title.split(".")[0]
+			if  rowname in accession2taxid:
+				taxid = accession2taxid[rowname]
 				outf.write('>%s|kraken:taxid|%s\n%s\n' % (title, taxid, seq))

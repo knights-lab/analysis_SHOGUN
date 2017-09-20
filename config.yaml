@@ -1,11 +1,11 @@
 reference:
   test: "data/references/test"
-  miniGWG: "data/references/miniGWG"
-  megaGMG: "data/references/megaGMG"
-  megaGWG: "data/references/megaGWG"
-  miniGWG_darth: "data/references/miniGWG_darth"
-  miniGWG_darth_lin: "data/references/linear"
-  miniGWG_darth_lin_dusted:
+  #miniGWG: "data/references/miniGWG"
+  #megaGMG: "data/references/megaGMG"
+  #megaGWG: "data/references/megaGWG"
+  #miniGWG_darth: "data/references/miniGWG_darth"
+  rep82: "data/references/rep82"
+  rep82_dusted: "data/references/rep82_dusted"
 
 redistribute: "data/shogun/database/sheared_bayes.txt"
 
@@ -13,6 +13,6 @@ settings:
   benchmarks: true
   debug: true
 
-benchmark_replicates: 3
-contexts: ['test', 'miniGWG']
+benchmark_replicates: 1
+contexts: ['rep82', 'rep82_dusted']
 tools: ['utree']

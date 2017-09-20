@@ -14,15 +14,17 @@ import os
 ## Include the config
 configfile: "config.yaml"
 
-contexts = ["test"]
-
 if config["settings"]["debug"]:
     import ipdb
 
+# Setup the results variable
 results = []
+
+# Expand to include the benchmarks
 if config["settings"]["benchmarks"]:
     results.extend(expand("results/tables/benchmark_{context}_index.txt", context=config['contexts']))
 
+# Include the make indicies for Kraken/Centrifuge
 results.extend(expand("results/indices/{context}.ctr", context=config['contexts']))
 results.extend(expand("results/indices/kraken_{context}", context=config['contexts']))
 results.extend(expand("results/indices/centrifuge_{context}/centrifuge_{context}.{k}.cf", context=config['contexts'], k=[1,2,3]))
@@ -39,12 +41,12 @@ results.extend(expand("results/single_strains/taxatable_{basename}.{level}.txt",
 #/project/flatiron2/analysis_SHOGUN/data/single_strain/saureus_analysis/saureus_b6_files/
 
 ### UDS
-UDS_RUNS = ['160729_K00180_0226_AH7WCCBBXX', '160729_K00180_0227_BHCT3LBBXX']
-
+#UDS_RUNS = ['160729_K00180_0226_AH7WCCBBXX', '160729_K00180_0227_BHCT3LBBXX']
+UDS_RUNS = ['160729_K00180_0226_AH7WCCBBXX']
 for run in UDS_RUNS:
     path = "data/hiseq4000/%s" % run
     sample_names, = glob_wildcards(path + "/{sample_name}.fastq.gz")
-    #results.extend(expand("results/uds/{uds_run}.{sample_name}.{context}.b6", context=['miniGWG_darth'], uds_run=run, sample_name=sample_names))
+    results.extend(expand("results/uds/{uds_run}.{sample_name}.{context}.b6", context=['rep82'], uds_run=run, sample_name=sample_names))
 
 rule all:
     input:
@@ -142,61 +144,9 @@ rule index_centrifuge:
     shell:
         "centrifuge-build -p {threads} --conversion-table {input.conversion_table} --taxonomy-tree {input.taxonomy_tree} --name-table {input.name_table} {input.fasta} {params.path}"
 
-
-### Index LinDarth
-rule krakenify_lindarth:
-    input:
-        fasta="data/references/linear/rep82_combined.fixed.fna",
-        tax="data/references/linear/rep82_combined.fixed.tax",
-        mapping="data/references/a2t.rs81.txt",       
-    output:
-        "results/indices/kraken_lindarth.fna"
-    script:
-        "scripts/krakenify_gmg.py"
-
-rule krakenify_lindarthdusted:
-    input:
-        fasta="data/references/linear/rep82_combined.dusted.fna",
-        tax="data/references/linear/rep82_combined.fixed.tax",
-        mapping="data/references/a2t.rs81.txt",       
-    output:
-        "results/indices/kraken_lindarthdusted.fna"
-    script:
-        "scripts/krakenify_gmg.py"
-
-rule centrifugify_lindarth:
-    input:
-        fasta="data/references/linear/rep82_combined.fixed.fna",
-        tax="data/references/linear/rep82_combined.fixed.tax",
-        mapping="data/references/a2t.rs81.txt",
-    output:
-        "results/indices/centrifuge_lindarth.map",
-    benchmark:
-        "results/benchmarks/index_centrifuge_lindarth.log",
-    script:
-        "scripts/centrifugify_gmg.py"
-
-rule centrifugify_lindarthdusted:
-    input:
-        fasta="data/references/linear/rep82_combined.dusted.hard.fna",
-        tax="data/references/linear/rep82_combined.fixed.tax",
-        mapping="data/references/a2t.rs81.txt",
-    output:
-        "results/indices/centrifuge_lindarthdusted.map"
-    benchmark:
-        "results/benchmarks/index_centrifuge_lindarthdusted.log"
-    script:
-        "scripts/centrifugify_gmg.py"
-
-rule lindarth:
-    input:
-        [ "results/indices/centrifuge_lindarthdusted.map", 
-        "results/indices/centrifuge_lindarth.map", 
-        "results/indices/kraken_lindarth.fna", 
-        "results/indices/kraken_lindarthdusted.fna"]
+### Shearing
 
 ### Benchmarks
-
 
 ### Indexing of Databases
 rule benchmark_index_utree:
