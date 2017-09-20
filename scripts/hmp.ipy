@@ -1,0 +1,53 @@
+#!/usr/bin/env ipython
+import glob
+import os
+
+#!module load qiime
+#!module load bowtie2
+
+replicates = 1
+
+# Infiles
+INPUT_FILES = glob.glob("data/hmp/R1/hmp*")
+INPUT_FILES = INPUT_FILES[:15]
+print(INPUT_FILES)
+OUTPUT_FOLDER = "HMP" 
+
+shogun_command = "/usr/bin/time -v shogun --log debug --shell pipeline --input {input} --database {database} --aligner {aligner} --output {outfolder} --threads 32 --level species &> {outfolder}/timing.txt"
+shogun_coverage = "/usr/bin/time -v shogun --log debug coverage --input {outfolder}/alignment.burst.b6 --database {database} --output {outfolder}/coverage.{level}.txt --level {level} &> {outfolder}/timing.coverage.{level}.txt &"
+shogun_taxonomy =  "/usr/bin/time -v shogun --log debug assign_taxonomy --no-capitalist --input {outfolder}/alignment.burst.b6 --database {database} --output {outfolder}/taxatable.burst.taxonomy.txt &> {outfolder}/timing.assign_taxonomy.txt; /usr/bin/time -v shogun --log debug redistribute --database {database} --input {outfolder}/taxatable.burst.taxonomy.txt --level species --output {outfolder}/taxatable.burst.taxonomy.species.txt &> {outfolder}/timing.redistribute.txt &"
+
+aligner = 'all'
+database = os.path.abspath("/home/knightsd/hillm096/globus/SHOGUN/rep82")
+
+db_base = os.path.basename(database)
+#!cp -r {database}/ /dev/shm/{db_base}
+#database_ram = "/dev/shm/{db_base}".format(db_base=db_base)
+
+for inf in INPUT_FILES:
+    basename = os.path.basename(inf)
+    for size in ['1', '01', '001', '0001', 'fulldepth']:
+        for replicate in range(replicates):
+            if not size == 'fulldepth':
+                # subsample_fasta.py -i $PWD/seqs.fna -p 0.05 -o $PWD/subsampled_seqs.fna
+                input = "/dev/shm/subsampled_seqs.fna"
+                !scripts/subsample_fasta.py -i {inf} -p 0.{size} -o {input}
+            else:
+                input = inf
+            outfolder = "results/{output}/{basename}_{size}_{replicate}".format(basename=basename, size=size, replicate=replicate+1, output=OUTPUT_FOLDER) 
+            if not os.path.exists(outfolder):
+                os.makedirs(outfolder)
+            !grep "^>" {input} | wc -l > {outfolder}/count.seqs.txt
+            command = shogun_command.format(database=database, input=input, outfolder=outfolder, aligner=aligner)
+            !{command}
+            for level in ["species", "strain"]:
+                coverage_cmd = shogun_coverage.format(database=database, outfolder=outfolder, level=level)
+                !{coverage_cmd}
+            taxonomy_cmd = shogun_taxonomy.format(database=database, outfolder=outfolder)
+            !{taxonomy_cmd}
+            if size == 'fulldepth':
+                break
+            else:
+                !rm -f {input}
+
+!rm -rf /dev/shm/{db_base}
