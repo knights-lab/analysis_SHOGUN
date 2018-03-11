@@ -11,7 +11,7 @@ alignment = sys.argv[3]
 with open(accession2taxonomy) as inf:
     next(inf)
     csv_inf = csv.reader(inf, delimiter="\t")
-    a2t = dict((row[0], row[-1]) for row in csv_inf)
+    a2t = dict(('_'.join(row[0].split()[0].split('_')[:-1]).split('.')[0], row[-1]) for row in csv_inf)
 print("Loaded accession2taxonomy.")
 
 reads_counter = Counter()
@@ -27,9 +27,6 @@ with open(sequences) as inf:
                 reads_counter.update([species])
 
 print("Loaded read counter")
-for key, value in reads_counter.items():
-    with open("sheared_read_counts.txt", "w") as outf:
-        outf.write("%s\t%d\n" % (key, value))
 
 counts_dict = defaultdict(Counter)
 with open(alignment) as inf:
